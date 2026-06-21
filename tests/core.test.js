@@ -325,3 +325,55 @@ test("public sample configs are valid and keep source facts host-reviewed", asyn
     }
   }
 });
+
+test("guest page config loader prefers host config before demo fallback", async () => {
+  const { CONFIG_CANDIDATE_PATHS, loadConfigFromCandidates } = await import("../lib/config-loader.js");
+
+  assert.deepEqual(CONFIG_CANDIDATE_PATHS, [
+    "./config.json",
+    "./samples/demo.config.json",
+    "./config.example.json"
+  ]);
+
+  const calls = [];
+  const fakeFetch = async (path) => {
+    calls.push(path);
+
+    if (path === "./samples/demo.config.json") {
+      return {
+        ok: true,
+        async json() {
+          return { property: { id: "demo-harbor-loft" } };
+        }
+      };
+    }
+
+    return { ok: false, status: 404 };
+  };
+
+  const result = await loadConfigFromCandidates(fakeFetch);
+
+  assert.equal(result.path, "./samples/demo.config.json");
+  assert.equal(result.fallbackUsed, true);
+  assert.deepEqual(calls, ["./config.json", "./samples/demo.config.json"]);
+});
+
+test("demo config is a public Pages fallback with four guest languages", async () => {
+  const config = JSON.parse(
+    await readFile(resolve(projectRoot, "samples", "demo.config.json"), "utf8")
+  );
+  const languages = ["en", "ko", "ja", "zh"];
+
+  assert.equal(config.property.id, "demo-harbor-loft");
+  assert.deepEqual(config.property.supportedLanguages, languages);
+  assert.equal(config.demo.publicDemo, true);
+  assert.ok(config.approvedStayGuide.length >= 4);
+
+  for (const section of config.approvedStayGuide) {
+    assert.equal(section.hostApproved, true);
+    for (const language of languages) {
+      assert.ok(section.title[language], `${section.id} title missing ${language}`);
+      assert.ok(section.body[language], `${section.id} body missing ${language}`);
+    }
+  }
+});

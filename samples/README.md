@@ -13,6 +13,7 @@ Use them to understand:
 
 - `seoul-guesthouse.config.json`
 - `osaka-family-stay.config.json`
+- `demo.config.json` - public GitHub Pages fallback used when `config.json` is not present
 
 To use a sample:
 
@@ -26,5 +27,5 @@ Then open:
 index.html?lang=en
 index.html?lang=ja
 index.html?lang=ko
+index.html?lang=zh
 ```
-

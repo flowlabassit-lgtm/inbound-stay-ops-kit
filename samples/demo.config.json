@@ -1,0 +1,229 @@
+{
+  "demo": {
+    "publicDemo": true,
+    "note": "Public GitHub Pages fallback. Replace with config.json for a real host stay guide."
+  },
+  "property": {
+    "id": "demo-harbor-loft",
+    "name": "Harbor Loft Demo Stay",
+    "defaultLanguage": "en",
+    "supportedLanguages": ["en", "ko", "ja", "zh"],
+    "publicAddress": {
+      "en": "Near Central Station, waterfront district",
+      "ko": "중앙역 근처 워터프론트 구역",
+      "ja": "中央駅近くのウォーターフロントエリア",
+      "zh": "中央车站附近的滨水区域"
+    }
+  },
+  "telegram": {
+    "enabled": false,
+    "botUrl": ""
+  },
+  "agent": {
+    "enabled": false,
+    "endpoint": "/api/guest-agent"
+  },
+  "sources": [
+    {
+      "type": "airbnb",
+      "label": {
+        "en": "Host-pasted Airbnb listing",
+        "ko": "호스트가 붙여넣은 Airbnb 숙소 정보",
+        "ja": "ホストが貼り付けたAirbnb掲載情報",
+        "zh": "房东粘贴的 Airbnb 房源信息"
+      },
+      "url": "https://example.com/demo-airbnb-listing",
+      "importMode": "host_pasted_text",
+      "hostConfirmed": true,
+      "approvedSummary": {
+        "en": "Compact loft stay near the station with self check-in, fast Wi-Fi, elevator access, and a quiet night policy after 22:00.",
+        "ko": "역 근처의 컴팩트한 로프트 숙소입니다. 셀프 체크인, 빠른 와이파이, 엘리베이터 이용, 22시 이후 정숙 규칙이 포함됩니다.",
+        "ja": "駅近くのコンパクトなロフト滞在です。セルフチェックイン、高速Wi-Fi、エレベーター、22時以降の静粛ルールがあります。",
+        "zh": "靠近车站的紧凑型 loft 住宿，支持自助入住、高速 Wi-Fi、电梯，并要求 22:00 后保持安静。"
+      }
+    }
+  ],
+  "approvedKnowledge": {
+    "checkIn": {
+      "en": "Self check-in starts at 15:00. The host sends private access details through the booking platform on arrival day.",
+      "ko": "셀프 체크인은 15:00부터 가능합니다. 개인 출입 정보는 도착 당일 예약 플랫폼을 통해 호스트가 안내합니다.",
+      "ja": "セルフチェックインは15:00から可能です。個別の入室情報は到着日に予約プラットフォーム経由でホストが案内します。",
+      "zh": "15:00 后可自助入住。私人入门信息会在抵达当天由房东通过预订平台发送。"
+    },
+    "checkOut": {
+      "en": "Check-out is by 11:00. Please turn off the lights and air conditioning before leaving.",
+      "ko": "체크아웃은 11:00까지입니다. 퇴실 전 조명과 에어컨을 꺼주세요.",
+      "ja": "チェックアウトは11:00までです。退出前に照明とエアコンを消してください。",
+      "zh": "请在 11:00 前退房。离开前请关闭灯和空调。"
+    },
+    "transport": {
+      "en": "The nearest metro exit is a short walk away. Airport buses stop near Central Station.",
+      "ko": "가장 가까운 지하철 출구는 도보로 가까운 거리에 있습니다. 공항버스는 중앙역 근처에 정차합니다.",
+      "ja": "最寄りの地下鉄出口は徒歩圏内です。空港バスは中央駅付近に停車します。",
+      "zh": "最近的地铁出口步行即可到达。机场巴士停靠在中央车站附近。"
+    },
+    "houseRules": {
+      "en": ["No smoking indoors.", "Quiet hours begin at 22:00.", "Please separate recycling before check-out."],
+      "ko": ["실내 흡연은 금지입니다.", "22:00부터 정숙 시간입니다.", "체크아웃 전 재활용품을 분리해 주세요."],
+      "ja": ["室内は禁煙です。", "22:00以降は静かにお過ごしください。", "チェックアウト前にリサイクルを分別してください。"],
+      "zh": ["室内禁止吸烟。", "22:00 后请保持安静。", "退房前请将可回收物分类。"]
+    }
+  },
+  "approvedStayGuide": [
+    {
+      "id": "listing-overview",
+      "sourceType": "airbnb",
+      "hostApproved": true,
+      "title": {
+        "en": "Stay Overview",
+        "ko": "숙소 개요",
+        "ja": "滞在概要",
+        "zh": "住宿概览"
+      },
+      "body": {
+        "en": "Harbor Loft Demo Stay is a compact city loft near Central Station. It is set up for short international stays with self check-in, elevator access, fast Wi-Fi, and simple house rules.",
+        "ko": "Harbor Loft Demo Stay는 중앙역 근처의 컴팩트한 도심 로프트입니다. 셀프 체크인, 엘리베이터, 빠른 와이파이, 간단한 하우스룰을 갖춘 외국인 단기 숙박용 예시입니다.",
+        "ja": "Harbor Loft Demo Stayは中央駅近くのコンパクトな都市型ロフトです。セルフチェックイン、エレベーター、高速Wi-Fi、シンプルなルールで短期の海外ゲスト向けに整えています。",
+        "zh": "Harbor Loft Demo Stay 是中央车站附近的紧凑型城市 loft。它适合短期国际住客，提供自助入住、电梯、高速 Wi-Fi 和简单房屋规则。"
+      }
+    },
+    {
+      "id": "self-check-in",
+      "sourceType": "host_note",
+      "hostApproved": true,
+      "title": {
+        "en": "Self Check-in",
+        "ko": "셀프 체크인",
+        "ja": "セルフチェックイン",
+        "zh": "自助入住"
+      },
+      "body": {
+        "en": "Check-in starts at 15:00. Private access details are not shown on this public page. The host sends them through the booking platform on arrival day.",
+        "ko": "체크인은 15:00부터 가능합니다. 개인 출입 정보는 이 공개 페이지에 표시하지 않습니다. 도착 당일 호스트가 예약 플랫폼을 통해 안내합니다.",
+        "ja": "チェックインは15:00からです。個別の入室情報はこの公開ページには表示しません。到着日にホストが予約プラットフォーム経由で案内します。",
+        "zh": "15:00 后可入住。私人入门信息不会显示在这个公开页面上。房东会在抵达当天通过预订平台发送。"
+      }
+    },
+    {
+      "id": "house-rules",
+      "sourceType": "host_note",
+      "hostApproved": true,
+      "title": {
+        "en": "House Rules",
+        "ko": "하우스룰",
+        "ja": "ハウスルール",
+        "zh": "房屋守则"
+      },
+      "body": {
+        "en": "No smoking indoors. Quiet hours begin at 22:00. Please separate recycling before check-out and message the host if anything is damaged.",
+        "ko": "실내 흡연은 금지입니다. 22:00부터 정숙 시간입니다. 체크아웃 전 재활용품을 분리하고, 파손이 있으면 호스트에게 메시지를 보내주세요.",
+        "ja": "室内は禁煙です。22:00以降は静かにお過ごしください。チェックアウト前にリサイクルを分別し、破損があればホストへ連絡してください。",
+        "zh": "室内禁止吸烟。22:00 后请保持安静。退房前请将可回收物分类，如有损坏请联系房东。"
+      }
+    },
+    {
+      "id": "local-guide",
+      "sourceType": "host_note",
+      "hostApproved": true,
+      "title": {
+        "en": "Nearby Basics",
+        "ko": "주변 기본 정보",
+        "ja": "周辺の基本情報",
+        "zh": "周边基础信息"
+      },
+      "body": {
+        "en": "The nearest metro exit, convenience store, and pharmacy are within a short walk. Airport buses stop near Central Station, so most guests do not need a taxi unless they arrive late at night.",
+        "ko": "가까운 지하철 출구, 편의점, 약국은 모두 도보권에 있습니다. 공항버스가 중앙역 근처에 정차하므로 늦은 밤 도착이 아니라면 대부분 택시가 필요하지 않습니다.",
+        "ja": "最寄りの地下鉄出口、コンビニ、薬局は徒歩圏内です。空港バスは中央駅付近に停車するため、深夜到着でなければ多くのゲストはタクシーなしで移動できます。",
+        "zh": "最近的地铁出口、便利店和药店都在步行范围内。机场巴士停靠在中央车站附近，除非深夜抵达，大多数住客不需要打车。"
+      }
+    },
+    {
+      "id": "host-review",
+      "sourceType": "safety",
+      "hostApproved": true,
+      "title": {
+        "en": "Questions That Need Host Review",
+        "ko": "호스트 확인이 필요한 질문",
+        "ja": "ホスト確認が必要な質問",
+        "zh": "需要房东确认的问题"
+      },
+      "body": {
+        "en": "Early check-in, luggage storage, lost items, refunds, and private access details should not be answered automatically. The agent creates a host-review ticket instead.",
+        "ko": "얼리 체크인, 짐 보관, 분실물, 환불, 개인 출입 정보는 자동 답변하지 않습니다. 에이전트가 호스트 확인 티켓으로 넘깁니다.",
+        "ja": "アーリーチェックイン、荷物預かり、忘れ物、返金、個別の入室情報は自動回答しません。エージェントがホスト確認チケットに回します。",
+        "zh": "提前入住、行李寄存、遗失物、退款和私人入门信息不应自动回答。智能助手会创建房东确认工单。"
+      }
+    }
+  ],
+  "faq": [
+    {
+      "id": "wifi",
+      "keywords": ["wifi", "wi-fi", "internet", "와이파이", "인터넷", "无线网络"],
+      "answer": {
+        "en": "Wi-Fi details are printed inside the room. The public guest page does not show passwords.",
+        "ko": "와이파이 정보는 객실 안에 인쇄되어 있습니다. 공개 게스트 페이지에는 비밀번호를 표시하지 않습니다.",
+        "ja": "Wi-Fi情報は室内に掲示されています。公開ゲストページにはパスワードを表示しません。",
+        "zh": "Wi-Fi 信息打印在房间内。公开住客页面不会显示密码。"
+      },
+      "hostApproved": true
+    },
+    {
+      "id": "trash",
+      "keywords": ["trash", "garbage", "recycling", "쓰레기", "재활용", "ゴミ", "垃圾"],
+      "answer": {
+        "en": "Please separate recycling before check-out and leave sealed trash in the designated bin area.",
+        "ko": "체크아웃 전 재활용품을 분리하고, 일반 쓰레기는 봉투를 묶어 지정된 수거 공간에 두세요.",
+        "ja": "チェックアウト前にリサイクルを分別し、一般ゴミは袋を閉じて指定場所に置いてください。",
+        "zh": "退房前请将可回收物分类，普通垃圾请封好后放到指定区域。"
+      },
+      "hostApproved": true
+    }
+  ],
+  "safety": {
+    "hostReviewTopics": [
+      {
+        "id": "early_check_in",
+        "keywords": ["early check-in", "before 15", "check in early", "얼리 체크인", "早めにチェックイン", "提前入住"],
+        "message": {
+          "en": "Early check-in depends on cleaning status. I will route this to the host for confirmation.",
+          "ko": "얼리 체크인은 청소 일정에 따라 달라집니다. 호스트 확인으로 전달하겠습니다.",
+          "ja": "アーリーチェックインは清掃状況によります。ホスト確認へ回します。",
+          "zh": "提前入住取决于清洁进度。我会转给房东确认。"
+        }
+      },
+      {
+        "id": "luggage_storage",
+        "keywords": ["luggage", "bag", "store my bags", "짐 보관", "荷物", "行李"],
+        "message": {
+          "en": "Luggage storage must be confirmed by the host because it depends on the cleaning schedule.",
+          "ko": "짐 보관은 청소 일정에 따라 달라져서 호스트 확인이 필요합니다.",
+          "ja": "荷物預かりは清掃スケジュールによるため、ホスト確認が必要です。",
+          "zh": "行李寄存取决于清洁安排，需要房东确认。"
+        }
+      }
+    ],
+    "blockedTopics": [
+      {
+        "id": "refund_policy",
+        "keywords": ["refund", "cancel", "cancellation", "환불", "취소", "返金", "キャンセル", "退款", "取消"],
+        "message": {
+          "en": "Refunds and cancellations must be handled in the booking platform so the record stays official.",
+          "ko": "환불과 취소는 공식 기록을 남기기 위해 예약 플랫폼에서 처리해야 합니다.",
+          "ja": "返金やキャンセルは公式記録を残すため、予約プラットフォーム上で手続きしてください。",
+          "zh": "退款和取消必须在预订平台内处理，以保留正式记录。"
+        }
+      },
+      {
+        "id": "private_access",
+        "keywords": ["door code", "password", "access code", "현관 비밀번호", "도어락", "暗証番号", "密码", "门禁码"],
+        "message": {
+          "en": "Private access details are not shared on the public guest page. Please check the booking platform message thread.",
+          "ko": "개인 출입 정보는 공개 게스트 페이지에서 공유하지 않습니다. 예약 플랫폼 메시지를 확인해 주세요.",
+          "ja": "個別の入室情報は公開ゲストページでは共有しません。予約プラットフォームのメッセージを確認してください。",
+          "zh": "私人入门信息不会在公开住客页面分享。请查看预订平台消息。"
+        }
+      }
+    ]
+  }
+}

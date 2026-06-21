@@ -1,3 +1,4 @@
+import { loadConfigFromCandidates } from "../lib/config-loader.js";
 import {
   buildApprovedKnowledgeBase,
   resolveGuestReply
@@ -8,8 +9,153 @@ import {
   writeStoredLanguage
 } from "../lib/language.js";
 
+const fallbackCopy = {
+  pageEyebrow: {
+    en: "Guest help",
+    ko: "게스트 도움말",
+    ja: "ゲストヘルプ",
+    zh: "住客帮助"
+  },
+  languageLabel: {
+    en: "Language",
+    ko: "언어",
+    ja: "言語",
+    zh: "语言"
+  },
+  demoBadge: {
+    en: "Public demo",
+    ko: "공개 데모",
+    ja: "公開デモ",
+    zh: "公开演示"
+  },
+  statusTitle: {
+    en: "Translated from host-approved listing content",
+    ko: "호스트가 승인한 숙소 내용을 게스트 언어로 번역",
+    ja: "ホスト承認済みの宿泊情報をゲストの言語で表示",
+    zh: "将房东确认的住宿信息翻译成住客语言"
+  },
+  statusBody: {
+    en: "Listing text is collected only after the host pastes and approves it. Extra questions go to the agent and risky topics are routed to the host.",
+    ko: "숙소 플랫폼 내용은 호스트가 붙여넣고 승인한 뒤에만 표시됩니다. 추가 질문은 에이전트가 처리하고 위험한 주제는 호스트 확인으로 넘깁니다.",
+    ja: "掲載内容はホストが貼り付けて承認した情報だけを表示します。追加質問はエージェントが対応し、判断が必要な内容はホストへ回します。",
+    zh: "页面只展示房东粘贴并确认过的房源信息。额外问题由智能助手处理，需要判断的内容会转给房东。"
+  },
+  telegramButton: {
+    en: "Ask in Telegram",
+    ko: "Telegram으로 문의",
+    ja: "Telegramで質問",
+    zh: "在 Telegram 提问"
+  },
+  guideTitle: {
+    en: "Translated Stay Guide",
+    ko: "번역된 숙소 가이드",
+    ja: "翻訳済みステイガイド",
+    zh: "已翻译住宿指南"
+  },
+  guideIntro: {
+    en: "Core listing details appear here in the guest's language. The agent handles only what is not already covered.",
+    ko: "핵심 숙소 정보는 게스트의 언어로 먼저 표시됩니다. 이미 안내된 내용 외의 질문만 에이전트가 처리합니다.",
+    ja: "基本的な宿泊情報はゲストの言語で先に表示されます。未記載の質問だけをエージェントが対応します。",
+    zh: "核心房源信息会先用住客语言展示。智能助手只处理指南之外的问题。"
+  },
+  agentTitle: {
+    en: "Ask the Agent",
+    ko: "에이전트에게 질문",
+    ja: "エージェントに質問",
+    zh: "询问智能助手"
+  },
+  agentIntro: {
+    en: "Use this for questions not covered above. Host-review topics are not answered automatically.",
+    ko: "위 가이드에 없는 질문만 입력하세요. 호스트 확인이 필요한 내용은 자동 답변하지 않습니다.",
+    ja: "上のガイドにない質問だけ入力してください。ホスト確認が必要な内容は自動回答しません。",
+    zh: "请只输入上方指南没有覆盖的问题。需要房东确认的话题不会自动回答。"
+  },
+  askPlaceholder: {
+    en: "Ask an extra question...",
+    ko: "추가 질문을 입력하세요...",
+    ja: "追加の質問を入力...",
+    zh: "输入其他问题..."
+  },
+  askButton: {
+    en: "Ask",
+    ko: "질문",
+    ja: "質問",
+    zh: "提问"
+  },
+  agentHint: {
+    en: "Ask the agent about anything not covered in the translated stay guide. Risky or uncertain questions will be routed to the host.",
+    ko: "번역된 숙소 가이드에 없는 내용만 에이전트에게 질문하세요. 위험하거나 확실하지 않은 질문은 호스트 확인으로 전달됩니다.",
+    ja: "翻訳済みガイドにない内容だけエージェントに質問してください。危険または不確かな質問はホスト確認へ回されます。",
+    zh: "请向智能助手询问住宿指南未覆盖的内容。风险或不确定的问题会转给房东确认。"
+  },
+  askingAgent: {
+    en: "Asking the agent...",
+    ko: "에이전트에게 확인 중...",
+    ja: "エージェントに確認中...",
+    zh: "正在询问智能助手..."
+  },
+  sourceTitle: {
+    en: "Source Links",
+    ko: "출처 링크",
+    ja: "情報元リンク",
+    zh: "来源链接"
+  },
+  sourceIntro: {
+    en: "These links help guests verify the official listing. This page does not scrape booking platforms.",
+    ko: "게스트가 공식 숙소 정보를 확인할 수 있는 링크입니다. 이 페이지는 예약 플랫폼을 자동 수집하지 않습니다.",
+    ja: "ゲストが公式掲載情報を確認できるリンクです。このページは予約プラットフォームをスクレイピングしません。",
+    zh: "这些链接用于帮助住客核对官方房源信息。本页面不会抓取预订平台内容。"
+  },
+  sourceApproved: {
+    en: "host approved",
+    ko: "호스트 승인",
+    ja: "ホスト承認済み",
+    zh: "房东已确认"
+  },
+  sourcePending: {
+    en: "pending host review",
+    ko: "호스트 확인 대기",
+    ja: "ホスト確認待ち",
+    zh: "等待房东确认"
+  }
+};
+
+const fallbackGuideLabels = {
+  checkIn: {
+    en: "Check-in",
+    ko: "체크인",
+    ja: "チェックイン",
+    zh: "入住"
+  },
+  checkOut: {
+    en: "Check-out",
+    ko: "체크아웃",
+    ja: "チェックアウト",
+    zh: "退房"
+  },
+  transport: {
+    en: "Transport",
+    ko: "교통",
+    ja: "交通",
+    zh: "交通"
+  },
+  houseRules: {
+    en: "House rules",
+    ko: "하우스룰",
+    ja: "ハウスルール",
+    zh: "房屋守则"
+  },
+  listingSummary: {
+    en: "Listing summary",
+    ko: "숙소 설명 요약",
+    ja: "掲載情報の要約",
+    zh: "房源摘要"
+  }
+};
+
 const state = {
   config: null,
+  configSource: "",
   language: "en"
 };
 
@@ -19,8 +165,16 @@ function localized(value, language) {
   return value[language] || value.en || Object.values(value)[0] || "";
 }
 
+function copy(key) {
+  return localized(state.config?.uiCopy?.[key] || fallbackCopy[key], state.language);
+}
+
 function formatLanguageName(language) {
-  return new Intl.DisplayNames([language], { type: "language" }).of(language) || language;
+  try {
+    return new Intl.DisplayNames([language], { type: "language" }).of(language) || language;
+  } catch {
+    return language;
+  }
 }
 
 function toTextBlocks(value, language) {
@@ -35,9 +189,9 @@ function toTextBlocks(value, language) {
 }
 
 async function loadConfig() {
-  const response = await fetch("./config.example.json", { cache: "no-store" });
-  if (!response.ok) throw new Error(`Unable to load config.example.json: ${response.status}`);
-  return response.json();
+  const result = await loadConfigFromCandidates(fetch);
+  state.configSource = result.path;
+  return result.config;
 }
 
 function renderLanguageSelect(config) {
@@ -57,20 +211,6 @@ function renderLanguageSelect(config) {
   });
 }
 
-function agentHint(language) {
-  return {
-    en: "Ask the agent about anything not covered in the translated stay guide. Risky or uncertain questions will be routed to the host.",
-    ko: "번역된 숙소 안내에 없는 내용만 에이전트에게 질문하세요. 위험하거나 확실하지 않은 질문은 호스트 확인으로 넘어갑니다.",
-    ja: "翻訳済みの宿泊ガイドにない内容だけをエージェントに質問してください。危険または不確かな質問はホスト確認に回されます。"
-  }[language] || "Ask the agent about anything not covered in the translated stay guide.";
-}
-
-function renderAgentHint() {
-  const box = document.querySelector("#answer-box");
-  box.dataset.action = "";
-  box.textContent = agentHint(state.language);
-}
-
 function buildGuideSections(config) {
   if (Array.isArray(config.approvedStayGuide) && config.approvedStayGuide.length > 0) {
     return config.approvedStayGuide;
@@ -81,27 +221,19 @@ function buildGuideSections(config) {
     .map((source) => ({
       id: `${source.type}-summary`,
       sourceType: source.type,
-      title: {
-        en: "Listing summary",
-        ko: "숙소 설명 요약",
-        ja: "宿泊施設の説明"
-      },
+      title: fallbackGuideLabels.listingSummary,
       body: source.approvedSummary
     }));
 
   const knowledge = config.approvedKnowledge || {};
   const fallbackSections = [
-    ["check-in", "Check-in", "체크인", "チェックイン", knowledge.checkIn],
-    ["check-out", "Check-out", "체크아웃", "チェックアウト", knowledge.checkOut],
-    ["transport", "Transport", "교통", "交通", knowledge.transport],
-    ["house-rules", "House rules", "하우스룰", "ハウスルール", knowledge.houseRules]
+    ["check-in", fallbackGuideLabels.checkIn, knowledge.checkIn],
+    ["check-out", fallbackGuideLabels.checkOut, knowledge.checkOut],
+    ["transport", fallbackGuideLabels.transport, knowledge.transport],
+    ["house-rules", fallbackGuideLabels.houseRules, knowledge.houseRules]
   ]
-    .filter(([, , , , body]) => body)
-    .map(([id, en, ko, ja, body]) => ({
-      id,
-      title: { en, ko, ja },
-      body
-    }));
+    .filter(([, , body]) => body)
+    .map(([id, title, body]) => ({ id, title, body }));
 
   return [...sourceSections, ...fallbackSections];
 }
@@ -145,12 +277,23 @@ function renderStayGuide(config) {
 function renderSources(config) {
   const sourceList = document.querySelector("#source-list");
   sourceList.innerHTML = "";
+
   for (const source of config.sources || []) {
     const link = document.createElement("a");
+    const label = localized(source.label, state.language) || source.type.replace(/_/g, " ");
+    const status = source.hostConfirmed ? copy("sourceApproved") : copy("sourcePending");
+
     link.href = source.url;
     link.target = "_blank";
     link.rel = "noreferrer";
-    link.textContent = `${source.type}: ${source.url} (${source.hostConfirmed ? "host approved" : "not approved yet"})`;
+    link.className = "source-row";
+
+    const title = document.createElement("strong");
+    title.textContent = label;
+    const meta = document.createElement("span");
+    meta.textContent = `${status} · ${source.url}`;
+
+    link.append(title, meta);
     sourceList.append(link);
   }
 }
@@ -190,7 +333,7 @@ async function answerQuestion(question) {
 
   try {
     box.dataset.action = "agent";
-    box.textContent = "Asking the agent...";
+    box.textContent = copy("askingAgent");
     const agentReply = await askAgent(question);
 
     if (agentReply?.reply) {
@@ -206,19 +349,48 @@ async function answerQuestion(question) {
   box.textContent = reply.message;
 }
 
+function renderChromeCopy() {
+  document.documentElement.lang = state.language;
+  document.querySelector("#page-eyebrow").textContent = copy("pageEyebrow");
+  document.querySelector("#language-label").textContent = copy("languageLabel");
+  document.querySelector("#status-title").textContent = copy("statusTitle");
+  document.querySelector("#status-body").textContent = copy("statusBody");
+  document.querySelector("#telegram-link").textContent = copy("telegramButton");
+  document.querySelector("#guide-title").textContent = copy("guideTitle");
+  document.querySelector("#guide-intro").textContent = copy("guideIntro");
+  document.querySelector("#agent-title").textContent = copy("agentTitle");
+  document.querySelector("#agent-intro").textContent = copy("agentIntro");
+  document.querySelector("#question-input").placeholder = copy("askPlaceholder");
+  document.querySelector("#ask-button").textContent = copy("askButton");
+  document.querySelector("#source-title").textContent = copy("sourceTitle");
+  document.querySelector("#source-intro").textContent = copy("sourceIntro");
+
+  const badge = document.querySelector("#demo-badge");
+  badge.textContent = copy("demoBadge");
+  badge.hidden = state.config?.demo?.publicDemo !== true && state.configSource === "./config.json";
+}
+
 function render() {
   const config = state.config;
   const knowledge = buildApprovedKnowledgeBase(config);
+  const telegramLink = document.querySelector("#telegram-link");
+  const telegramEnabled = config.telegram?.enabled !== false && config.telegram?.botUrl;
+
   document.querySelector("#property-name").textContent = knowledge.propertyName;
   document.querySelector("#property-address").textContent = localized(
     config.property.publicAddress,
     state.language
   );
-  document.querySelector("#telegram-link").href = config.telegram?.botUrl || "#";
+  telegramLink.href = telegramEnabled ? config.telegram.botUrl : "#";
+  telegramLink.setAttribute("aria-disabled", telegramEnabled ? "false" : "true");
 
+  renderChromeCopy();
   renderStayGuide(config);
   renderSources(config);
-  renderAgentHint();
+
+  const box = document.querySelector("#answer-box");
+  box.dataset.action = "";
+  box.textContent = copy("agentHint");
 }
 
 async function boot() {
@@ -243,7 +415,7 @@ async function boot() {
   } catch (error) {
     document.querySelector("#property-name").textContent = "Config load failed";
     document.querySelector("#answer-box").textContent =
-      `Run this kit from a local web server, then check config.example.json. ${error.message || error}`;
+      `Run this kit from a local web server, then check config.json or samples/demo.config.json. ${error.message || error}`;
     globalThis.__stayOpsLastError = {
       message: error.message || String(error),
       stack: error.stack || ""
