@@ -1,0 +1,185 @@
+{
+  "property": {
+    "id": "sample-seoul-stay",
+    "name": "Sample Seoul Stay",
+    "defaultLanguage": "en",
+    "supportedLanguages": ["ko", "en", "ja"],
+    "publicAddress": {
+      "en": "Near Hongdae Station, Seoul",
+      "ko": "서울 홍대입구역 인근",
+      "ja": "ソウル弘大入口駅の近く"
+    }
+  },
+  "telegram": {
+    "botUrl": "https://t.me/your_stay_bot",
+    "enabled": true
+  },
+  "agent": {
+    "enabled": false,
+    "endpoint": "",
+    "mode": "hermes",
+    "note": "Use a public proxy endpoint only. Do not put secret API keys in this static config."
+  },
+  "sources": [
+    {
+      "type": "airbnb",
+      "url": "https://www.airbnb.com/rooms/example",
+      "importMode": "host_pasted_text",
+      "hostConfirmed": true,
+      "lastReviewedAt": "2026-06-16",
+      "approvedSummary": {
+        "en": "This stay supports self check-in from 15:00. The exact door code is shared only on the arrival day.",
+        "ko": "이 숙소는 15:00부터 셀프 체크인을 지원합니다. 정확한 도어코드는 도착 당일에만 안내됩니다.",
+        "ja": "この宿泊施設は15:00からセルフチェックインできます。正確なドアコードは到着日にのみ案内されます。"
+      }
+    },
+    {
+      "type": "booking_platform",
+      "url": "https://example-booking-platform.test/sample-seoul-stay",
+      "importMode": "host_pasted_text",
+      "hostConfirmed": false,
+      "lastReviewedAt": null,
+      "note": "Paste text from this source into host-workbook/platform-source-form.md, then ask Codex or Claude to extract only host-approved facts."
+    }
+  ],
+  "approvedStayGuide": [
+    {
+      "id": "listing-overview",
+      "sourceType": "airbnb",
+      "title": {
+        "en": "Airbnb Listing Overview",
+        "ko": "에어비앤비 숙소 설명",
+        "ja": "Airbnbリスティング概要"
+      },
+      "body": {
+        "en": "This stay is near Hongdae Station in Seoul and is designed for independent guests who want simple self check-in.\n\nCheck-in starts at 15:00 and check-out is before 11:00. Exact access details are shared only on the arrival day for security.",
+        "ko": "이 숙소는 서울 홍대입구역 인근에 있으며, 간단한 셀프 체크인을 원하는 게스트에게 맞춰져 있습니다.\n\n체크인은 15:00부터이고 체크아웃은 11:00 전까지입니다. 보안을 위해 정확한 출입 정보는 도착 당일에만 안내됩니다.",
+        "ja": "この宿泊施設はソウルの弘大入口駅の近くにあり、簡単なセルフチェックインを希望するゲスト向けです。\n\nチェックインは15:00から、チェックアウトは11:00までです。安全のため、正確な入室情報は到着日のみ案内されます。"
+      }
+    },
+    {
+      "id": "house-rules",
+      "sourceType": "airbnb",
+      "title": {
+        "en": "House Rules",
+        "ko": "하우스룰",
+        "ja": "ハウスルール"
+      },
+      "body": {
+        "en": "No smoking inside the room. Quiet hours start after 22:00. Parties and extra overnight guests are not allowed.\n\nPlease follow the trash and building rules in the host guide before checkout.",
+        "ko": "객실 내 흡연은 금지입니다. 22:00 이후에는 조용히 이용해주세요. 파티와 추가 숙박 인원은 허용되지 않습니다.\n\n체크아웃 전 쓰레기 배출과 건물 이용 규칙은 호스트 가이드에 따라주세요.",
+        "ja": "室内は禁煙です。22:00以降は静かにお過ごしください。パーティーや追加宿泊者は許可されていません。\n\nチェックアウト前のゴミ出しと建物利用ルールはホストガイドに従ってください。"
+      }
+    },
+    {
+      "id": "guest-notes",
+      "sourceType": "host",
+      "title": {
+        "en": "Guest Notes",
+        "ko": "게스트 안내",
+        "ja": "ゲスト案内"
+      },
+      "body": {
+        "en": "Wi-Fi details are printed inside the room and are not shown on this public page.\n\nLuggage storage, early check-in, late check-out, lost items, and special requests need host confirmation. Use the question box or Telegram bot for those questions.",
+        "ko": "와이파이 정보는 객실 안에 인쇄되어 있으며, 공개 페이지에는 표시하지 않습니다.\n\n짐 보관, 얼리 체크인, 레이트 체크아웃, 분실물, 특별 요청은 호스트 확인이 필요합니다. 이런 질문은 질문 박스나 Telegram 봇으로 문의해주세요.",
+        "ja": "Wi-Fi情報は室内に印刷されており、この公開ページには表示されません。\n\n荷物預かり、早めのチェックイン、遅めのチェックアウト、忘れ物、特別なリクエストはホストの確認が必要です。これらは質問欄またはTelegramボットでお問い合わせください。"
+      }
+    }
+  ],
+  "approvedKnowledge": {
+    "checkIn": {
+      "en": "Check-in starts at 15:00. Early check-in requires host confirmation.",
+      "ko": "체크인은 15:00부터입니다. 얼리 체크인은 호스트 확인이 필요합니다.",
+      "ja": "チェックインは15:00からです。早めのチェックインはホストの確認が必要です。"
+    },
+    "checkOut": {
+      "en": "Check-out is before 11:00.",
+      "ko": "체크아웃은 11:00 전까지입니다.",
+      "ja": "チェックアウトは11:00までです。"
+    },
+    "houseRules": {
+      "en": ["No smoking.", "Quiet hours after 22:00.", "No parties or extra overnight guests."],
+      "ko": ["실내 흡연은 금지입니다.", "22:00 이후에는 조용히 이용해주세요.", "파티와 추가 숙박 인원은 허용되지 않습니다."],
+      "ja": ["室内は禁煙です。", "22:00以降は静かにお過ごしください。", "パーティーや追加宿泊者は許可されていません。"]
+    },
+    "transport": {
+      "en": "The nearest station exit and walking route should be confirmed in the host guide before publishing.",
+      "ko": "가장 가까운 역 출구와 도보 경로는 게시 전 호스트 가이드에서 확인해야 합니다.",
+      "ja": "最寄り駅の出口と徒歩ルートは公開前にホストガイドで確認してください。"
+    }
+  },
+  "faq": [
+    {
+      "id": "wifi",
+      "keywords": ["wifi", "wi-fi", "internet", "와이파이", "インターネット"],
+      "hostApproved": true,
+      "answer": {
+        "en": "Wi-Fi details are printed inside the room. For security, the password is not shown on this public page.",
+        "ko": "와이파이 정보는 객실 안에 인쇄되어 있습니다. 보안을 위해 공개 페이지에는 비밀번호를 표시하지 않습니다.",
+        "ja": "Wi-Fi情報は室内に印刷されています。安全のため、この公開ページにはパスワードを表示しません。"
+      }
+    },
+    {
+      "id": "luggage",
+      "keywords": ["luggage", "bag", "baggage", "짐", "荷物"],
+      "hostApproved": true,
+      "answer": {
+        "en": "Luggage storage depends on the cleaning schedule. Please ask through the Telegram bot so the host can confirm.",
+        "ko": "짐 보관은 청소 일정에 따라 달라집니다. Telegram 봇으로 문의하면 호스트가 확인합니다.",
+        "ja": "荷物預かりは清掃スケジュールによります。Telegramボットで問い合わせるとホストが確認します。"
+      }
+    }
+  ],
+  "safety": {
+    "hostReviewTopics": [
+      {
+        "id": "early_check_in",
+        "keywords": ["early check-in", "early check in", "check in at 11", "before check-in", "얼리 체크인", "早めのチェックイン"],
+        "message": {
+          "en": "Early check-in needs host confirmation.",
+          "ko": "얼리 체크인은 호스트 확인이 필요합니다.",
+          "ja": "早めのチェックインはホストの確認が必要です。"
+        }
+      },
+      {
+        "id": "lost_item",
+        "keywords": ["lost", "left behind", "분실", "忘れ物"],
+        "message": {
+          "en": "Lost items need host confirmation.",
+          "ko": "분실물은 호스트 확인이 필요합니다.",
+          "ja": "忘れ物はホストの確認が必要です。"
+        }
+      }
+    ],
+    "blockedTopics": [
+      {
+        "id": "refund_policy",
+        "keywords": ["refund", "cancel", "cancellation", "환불", "취소", "返金", "キャンセル"],
+        "message": {
+          "en": "Refunds, cancellations, and payment changes must be handled inside the booking platform.",
+          "ko": "환불, 취소, 결제 변경은 예약 플랫폼 안에서 처리해야 합니다.",
+          "ja": "返金、キャンセル、支払い変更は予約プラットフォーム内で処理してください。"
+        }
+      },
+      {
+        "id": "emergency",
+        "keywords": ["fire", "medical", "police", "emergency", "화재", "응급", "경찰", "緊急", "火事"],
+        "message": {
+          "en": "For emergencies, contact local emergency services first, then notify the host.",
+          "ko": "응급상황은 먼저 현지 긴급전화에 연락한 뒤 호스트에게 알려주세요.",
+          "ja": "緊急時はまず現地の緊急窓口に連絡し、その後ホストに知らせてください。"
+        }
+      }
+    ]
+  },
+  "hostReviewAck": {
+    "en": "This needs host confirmation. I will ask the host and get back to you here.",
+    "ko": "이 내용은 호스트 확인이 필요합니다. 호스트에게 확인한 뒤 여기로 답변드릴게요.",
+    "ja": "これはホストの確認が必要です。ホストに確認してからこちらで返信します。"
+  },
+  "fallbackReply": {
+    "en": "I do not have a confirmed answer for that yet. Please use the Telegram bot so the host can confirm.",
+    "ko": "아직 확인된 답변이 없습니다. Telegram 봇으로 문의하면 호스트가 확인할 수 있습니다.",
+    "ja": "まだ確認済みの回答がありません。Telegramボットで問い合わせるとホストが確認できます。"
+  }
+}

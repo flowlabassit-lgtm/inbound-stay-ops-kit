@@ -1,0 +1,11 @@
+{
+  "name": "inbound-stay-ops-telegram-adapter",
+  "version": "0.1.0",
+  "description": "Telegram host handoff adapter for Inbound Stay Ops Kit.",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dry-run": "node dry-run-handoff.mjs"
+  }
+}

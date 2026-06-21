@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Host Setup - Inbound Stay Ops Kit</title>
+    <link rel="stylesheet" href="./assets/style.css">
+  </head>
+  <body>
+    <main class="shell setup-shell" data-screen="Host Setup">
+      <section class="topbar">
+        <div>
+          <p class="eyebrow">Host setup</p>
+          <h1>Build your stay guide</h1>
+          <p class="muted">Create a host-reviewed prompt and config draft from pasted listing text.</p>
+        </div>
+        <a class="button secondary-button" href="./index.html">Guest page</a>
+      </section>
+
+      <section class="status-band warning-band">
+        <div>
+          <strong>Airbnb-safe mode</strong>
+          <p>Do not place this external guide link in Airbnb listings or Airbnb messages unless Airbnb explicitly allows it. Generate translated content to paste back into Airbnb, or use the guide as an optional in-stay QR/resource.</p>
+        </div>
+      </section>
+
+      <section class="setup-layout">
+        <form id="setup-form" class="panel setup-form">
+          <h2>Stay Inputs</h2>
+
+          <div class="form-grid">
+            <label>
+              <span>Property name</span>
+              <input name="propertyName" value="Sample Seoul Stay" autocomplete="off">
+            </label>
+            <label>
+              <span>Property slug</span>
+              <input name="propertySlug" value="sample-seoul-stay" autocomplete="off">
+            </label>
+            <label>
+              <span>Public area</span>
+              <input name="publicArea" value="Hongdae, Seoul" autocomplete="off">
+            </label>
+            <label>
+              <span>Supported languages</span>
+              <input name="supportedLanguages" value="ko,en,ja" autocomplete="off">
+            </label>
+            <label>
+              <span>Default language</span>
+              <input name="defaultLanguage" value="en" autocomplete="off">
+            </label>
+            <label>
+              <span>Telegram bot URL</span>
+              <input name="telegramBotUrl" placeholder="https://t.me/your_stay_bot" autocomplete="off">
+            </label>
+          </div>
+
+          <label>
+            <span>Airbnb or booking-platform URL</span>
+            <input name="platformUrl" value="https://www.airbnb.com/rooms/example" autocomplete="off">
+          </label>
+
+          <label>
+            <span>Host-pasted listing text</span>
+            <textarea name="platformText" rows="8">Self check-in from 15:00. Check-out is before 11:00. The stay is near Hongdae Station. No parties or extra overnight guests.</textarea>
+          </label>
+
+          <label>
+            <span>Check-in notes</span>
+            <textarea name="checkInNotes" rows="4">Check-in starts at 15:00. Exact access details are shared only on arrival day.</textarea>
+          </label>
+
+          <label>
+            <span>House rules</span>
+            <textarea name="houseRules" rows="4">No smoking. Quiet hours after 22:00. No parties or extra overnight guests.</textarea>
+          </label>
+
+          <label>
+            <span>Guest notes</span>
+            <textarea name="guestNotes" rows="4">Wi-Fi details are printed inside the room. Luggage storage and early check-in need host confirmation.</textarea>
+          </label>
+
+          <div class="action-row">
+            <button type="submit">Generate</button>
+            <button type="button" id="reset-sample" class="secondary-button">Reset sample</button>
+          </div>
+        </form>
+
+        <section class="setup-output">
+          <article class="panel">
+            <div class="panel-header">
+              <h2>Safety Check</h2>
+              <span id="warning-count" class="source-pill">0 warnings</span>
+            </div>
+            <ul id="warning-list" class="warning-list"></ul>
+          </article>
+
+          <article class="panel">
+            <div class="panel-header">
+              <h2>Codex / Hermes Prompt</h2>
+              <button type="button" id="copy-prompt" class="secondary-button">Copy</button>
+            </div>
+            <textarea id="prompt-output" class="output-textarea" rows="14" readonly></textarea>
+          </article>
+
+          <article class="panel">
+            <div class="panel-header">
+              <h2>Config Draft</h2>
+              <button type="button" id="copy-config" class="secondary-button">Copy</button>
+            </div>
+            <pre id="config-output" class="config-preview"></pre>
+          </article>
+        </section>
+      </section>
+    </main>
+
+    <script type="module" src="./assets/host-setup.js?v=20260617-host-setup"></script>
+  </body>
+</html>

@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Inbound Stay Ops Kit</title>
+    <link rel="stylesheet" href="./assets/style.css">
+  </head>
+  <body>
+    <main class="shell">
+      <section class="topbar">
+        <div>
+          <p class="eyebrow">Guest help</p>
+          <h1 id="property-name">Loading stay guide</h1>
+          <p id="property-address" class="muted"></p>
+        </div>
+        <label class="language-control">
+          <span>Language</span>
+          <select id="language-select"></select>
+        </label>
+      </section>
+
+      <section class="status-band">
+        <div>
+          <strong>Translated from host-approved listing content</strong>
+          <p>Airbnb or booking-platform text is collected only after the host pastes and approves it. Guests see the approved guide in their language.</p>
+        </div>
+        <a id="telegram-link" class="button" href="#" target="_blank" rel="noreferrer">Ask in Telegram</a>
+      </section>
+
+      <section class="layout">
+        <article class="panel guide-panel">
+          <h2>Translated Stay Guide</h2>
+          <p class="muted">This guide is the host-approved version of the listing and house information.</p>
+          <div id="stay-guide" class="guide-stack"></div>
+        </article>
+
+        <article class="panel">
+          <h2>Ask the Agent</h2>
+          <p class="muted">Use this only for questions that are not already covered in the stay guide.</p>
+          <form id="ask-form" class="ask-form">
+            <input id="question-input" name="question" autocomplete="off" placeholder="Ask an extra question...">
+            <button type="submit">Ask</button>
+          </form>
+          <div id="answer-box" class="answer-box" aria-live="polite"></div>
+        </article>
+      </section>
+
+      <section class="panel">
+        <h2>Source Links</h2>
+        <p class="muted">These links help guests verify the official listing. The page does not scrape them automatically.</p>
+        <div id="source-list" class="source-list"></div>
+      </section>
+    </main>
+
+    <script type="module" src="./assets/app.js?v=20260617-language-routing"></script>
+  </body>
+</html>

@@ -1,0 +1,17 @@
+{
+  "name": "inbound-stay-ops-kit",
+  "version": "0.1.0",
+  "description": "Open-source multilingual guest-help kit for stay hosts who receive foreign guests.",
+  "license": "MIT",
+  "type": "module",
+  "keywords": [
+    "guest-help",
+    "hospitality",
+    "airbnb",
+    "telegram-bot",
+    "multilingual"
+  ],
+  "scripts": {
+    "test": "node tests/core.test.js"
+  }
+}

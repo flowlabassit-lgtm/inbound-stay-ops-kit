@@ -1,0 +1,131 @@
+{
+  "property": {
+    "id": "sample-seoul-guesthouse",
+    "name": "Sample Seoul Guesthouse",
+    "defaultLanguage": "en",
+    "supportedLanguages": ["ko", "en", "ja"],
+    "publicAddress": {
+      "ko": "서울 홍대입구역 인근",
+      "en": "Near Hongdae Station, Seoul",
+      "ja": "ソウル弘大入口駅の近く"
+    }
+  },
+  "telegram": {
+    "botUrl": "https://t.me/your_stay_bot",
+    "enabled": true
+  },
+  "agent": {
+    "enabled": false,
+    "endpoint": "",
+    "mode": "hermes",
+    "note": "Use a public proxy endpoint only. Do not put secret API keys in this static config."
+  },
+  "sources": [
+    {
+      "type": "airbnb_or_booking_platform",
+      "url": "https://www.airbnb.com/rooms/example-seoul",
+      "importMode": "host_pasted_text",
+      "hostConfirmed": true,
+      "lastReviewedAt": "2026-06-17",
+      "note": "Synthetic sample source. Do not scrape."
+    }
+  ],
+  "approvedStayGuide": [
+    {
+      "id": "listing-overview",
+      "sourceType": "host_pasted_listing",
+      "title": {
+        "ko": "숙소 설명",
+        "en": "Listing Overview",
+        "ja": "宿泊施設の概要"
+      },
+      "body": {
+        "ko": "이 게스트하우스는 홍대입구역 인근에 있는 샘플 숙소입니다. 독립적인 여행객이 간단히 체크인하고 주변 지역을 둘러보기 좋은 구조입니다.\n\n정확한 출입 정보는 보안을 위해 도착 당일에만 안내됩니다.",
+        "en": "This guesthouse is a sample stay near Hongdae Station. It is designed for independent travelers who want simple check-in and easy access to the neighborhood.\n\nExact access details are shared only on the arrival day for security.",
+        "ja": "このゲストハウスは弘大入口駅近くのサンプル宿泊施設です。簡単なチェックインと周辺エリアへのアクセスを重視する旅行者向けです。\n\n安全のため、正確な入室情報は到着日のみ案内されます。"
+      },
+      "hostApproved": true,
+      "lastReviewedAt": "2026-06-17"
+    },
+    {
+      "id": "house-rules",
+      "sourceType": "host",
+      "title": {
+        "ko": "하우스룰",
+        "en": "House Rules",
+        "ja": "ハウスルール"
+      },
+      "body": {
+        "ko": "객실 내 흡연은 금지입니다. 22:00 이후에는 조용히 이용해주세요. 파티와 추가 숙박 인원은 허용되지 않습니다.",
+        "en": "No smoking inside the room. Quiet hours start after 22:00. Parties and extra overnight guests are not allowed.",
+        "ja": "室内は禁煙です。22:00以降は静かにお過ごしください。パーティーや追加宿泊者は許可されていません。"
+      },
+      "hostApproved": true,
+      "lastReviewedAt": "2026-06-17"
+    },
+    {
+      "id": "guest-notes",
+      "sourceType": "host",
+      "title": {
+        "ko": "게스트 안내",
+        "en": "Guest Notes",
+        "ja": "ゲスト案内"
+      },
+      "body": {
+        "ko": "와이파이 정보는 객실 안에 인쇄되어 있으며, 공개 페이지에는 표시하지 않습니다. 짐 보관과 얼리 체크인은 호스트 확인이 필요합니다.",
+        "en": "Wi-Fi details are printed inside the room and are not shown on this public page. Luggage storage and early check-in need host confirmation.",
+        "ja": "Wi-Fi情報は室内に印刷されており、この公開ページには表示されません。荷物預かりと早めのチェックインはホストの確認が必要です。"
+      },
+      "hostApproved": true,
+      "lastReviewedAt": "2026-06-17"
+    }
+  ],
+  "approvedKnowledge": {
+    "checkIn": {
+      "ko": "체크인은 15:00부터입니다.",
+      "en": "Check-in starts at 15:00.",
+      "ja": "チェックインは15:00からです。"
+    },
+    "houseRules": {
+      "ko": "흡연, 파티, 추가 숙박 인원은 허용되지 않습니다.",
+      "en": "Smoking, parties, and extra overnight guests are not allowed.",
+      "ja": "喫煙、パーティー、追加宿泊者は許可されていません。"
+    }
+  },
+  "faq": [],
+  "safety": {
+    "hostReviewTopics": [
+      {
+        "id": "early_check_in",
+        "keywords": ["early check-in", "early check in", "얼리 체크인", "早めのチェックイン"],
+        "message": {
+          "ko": "얼리 체크인은 호스트 확인이 필요합니다.",
+          "en": "Early check-in needs host confirmation.",
+          "ja": "早めのチェックインはホストの確認が必要です。"
+        }
+      }
+    ],
+    "blockedTopics": [
+      {
+        "id": "refund_policy",
+        "keywords": ["refund", "cancel", "환불", "취소", "返金", "キャンセル"],
+        "message": {
+          "ko": "환불, 취소, 결제 변경은 예약 플랫폼 안에서 처리해야 합니다.",
+          "en": "Refunds, cancellations, and payment changes must be handled inside the booking platform.",
+          "ja": "返金、キャンセル、支払い変更は予約プラットフォーム内で処理してください。"
+        }
+      }
+    ]
+  },
+  "hostReviewAck": {
+    "ko": "이 내용은 호스트 확인이 필요합니다.",
+    "en": "This needs host confirmation.",
+    "ja": "これはホストの確認が必要です。"
+  },
+  "fallbackReply": {
+    "ko": "아직 확인된 답변이 없습니다. 호스트 확인이 필요합니다.",
+    "en": "I do not have a confirmed answer for that yet. The host needs to confirm.",
+    "ja": "まだ確認済みの回答がありません。ホストの確認が必要です。"
+  }
+}
+
