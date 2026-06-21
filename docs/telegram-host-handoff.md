@@ -32,20 +32,21 @@ See `docs/telegram-dry-run-rehearsal.md`.
 3. Copy `adapters/telegram/.env.example` to `adapters/telegram/.env`.
 4. Set `TELEGRAM_BOT_TOKEN`.
 5. Set a private `TELEGRAM_ADMIN_SECRET`.
-6. Start the server:
+6. Set a private `TELEGRAM_WEBHOOK_SECRET`. Use the same value when registering the Telegram webhook.
+7. Start the server:
 
 ```bash
 cd adapters/telegram
 npm start
 ```
 
-7. Register the host admin in Telegram:
+8. Register the host admin in Telegram:
 
 ```text
 /admin YOUR_ADMIN_SECRET
 ```
 
-8. Guests can now message the bot.
+9. Guests can now message the bot.
 
 ## Host Reply
 
@@ -82,5 +83,15 @@ For production, expose your server over HTTPS and set the Telegram webhook to:
 ```text
 https://YOUR_DOMAIN/telegram/webhook
 ```
+
+Register the webhook with Telegram's secret token header enabled:
+
+```bash
+curl "https://api.telegram.org/botYOUR_BOT_TOKEN/setWebhook" \
+  -d "url=https://YOUR_DOMAIN/telegram/webhook" \
+  -d "secret_token=YOUR_TELEGRAM_WEBHOOK_SECRET"
+```
+
+The adapter rejects webhook POST requests when the `X-Telegram-Bot-Api-Secret-Token` header does not match `TELEGRAM_WEBHOOK_SECRET`.
 
 Do not call live APIs until your config and secrets are reviewed.

@@ -1,4 +1,6 @@
 import { loadConfigFromCandidates } from "../lib/config-loader.js";
+import { getPublicStayGuideSections } from "../lib/public-guide.js";
+import { safeExternalUrl, safeTelegramBotUrl } from "../lib/url-policy.js";
 import {
   buildApprovedKnowledgeBase,
   resolveGuestReply
@@ -212,8 +214,9 @@ function renderLanguageSelect(config) {
 }
 
 function buildGuideSections(config) {
-  if (Array.isArray(config.approvedStayGuide) && config.approvedStayGuide.length > 0) {
-    return config.approvedStayGuide;
+  const approvedSections = getPublicStayGuideSections(config);
+  if (approvedSections.length > 0) {
+    return approvedSections;
   }
 
   const sourceSections = (config.sources || [])
@@ -283,7 +286,8 @@ function renderSources(config) {
     const label = localized(source.label, state.language) || source.type.replace(/_/g, " ");
     const status = source.hostConfirmed ? copy("sourceApproved") : copy("sourcePending");
 
-    link.href = source.url;
+    const href = safeExternalUrl(source.url);
+    link.href = href;
     link.target = "_blank";
     link.rel = "noreferrer";
     link.className = "source-row";
@@ -291,7 +295,7 @@ function renderSources(config) {
     const title = document.createElement("strong");
     title.textContent = label;
     const meta = document.createElement("span");
-    meta.textContent = `${status} · ${source.url}`;
+    meta.textContent = `${status} · ${href === "#" ? "unsafe link blocked" : source.url}`;
 
     link.append(title, meta);
     sourceList.append(link);
@@ -374,14 +378,15 @@ function render() {
   const config = state.config;
   const knowledge = buildApprovedKnowledgeBase(config);
   const telegramLink = document.querySelector("#telegram-link");
-  const telegramEnabled = config.telegram?.enabled !== false && config.telegram?.botUrl;
+  const telegramUrl = safeTelegramBotUrl(config.telegram?.botUrl);
+  const telegramEnabled = config.telegram?.enabled !== false && telegramUrl;
 
   document.querySelector("#property-name").textContent = knowledge.propertyName;
   document.querySelector("#property-address").textContent = localized(
     config.property.publicAddress,
     state.language
   );
-  telegramLink.href = telegramEnabled ? config.telegram.botUrl : "#";
+  telegramLink.href = telegramEnabled ? telegramUrl : "#";
   telegramLink.setAttribute("aria-disabled", telegramEnabled ? "false" : "true");
 
   renderChromeCopy();

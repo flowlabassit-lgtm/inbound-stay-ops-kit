@@ -70,6 +70,7 @@ const sampleConfig = {
     {
       id: "listing-overview",
       sourceType: "airbnb",
+      hostApproved: true,
       title: {
         en: "Airbnb Listing Overview"
       },
@@ -128,6 +129,117 @@ test("approved knowledge base excludes unconfirmed platform source text", () => 
   assert.match(knowledge.text.en, /Self check-in is available from 15:00/);
   assert.doesNotMatch(knowledge.text.en, /UNAPPROVED/);
   assert.doesNotMatch(knowledge.text.en, /9999/);
+});
+
+test("approved knowledge base excludes unapproved stay guide draft sections", () => {
+  const config = {
+    ...sampleConfig,
+    approvedStayGuide: [
+      {
+        id: "draft-access",
+        hostApproved: false,
+        title: { en: "Draft Access" },
+        body: {
+          en: "UNAPPROVED: The door code is 1234."
+        }
+      },
+      {
+        id: "approved-summary",
+        hostApproved: true,
+        title: { en: "Approved Summary" },
+        body: {
+          en: "APPROVED: Check-in starts at 15:00."
+        }
+      }
+    ]
+  };
+
+  const knowledge = buildApprovedKnowledgeBase(config);
+
+  assert.match(knowledge.text.en, /APPROVED/);
+  assert.doesNotMatch(knowledge.text.en, /UNAPPROVED/);
+  assert.doesNotMatch(knowledge.text.en, /1234/);
+});
+
+test("setup draft does not feed unapproved host text into public or agent knowledge", () => {
+  const draft = buildConfigDraft({
+    propertyName: "Sample Seoul Stay",
+    supportedLanguages: "en",
+    platformText: "UNAPPROVED: The door code is 1234.",
+    checkInNotes: "Exact access details are shared on arrival day.",
+    houseRules: "No smoking.",
+    guestNotes: "Wi-Fi password is sample-password."
+  });
+
+  const knowledge = buildApprovedKnowledgeBase(draft);
+
+  assert.equal(draft.approvedStayGuide.every((section) => section.hostApproved === false), true);
+  assert.doesNotMatch(knowledge.text.en, /UNAPPROVED/);
+  assert.doesNotMatch(knowledge.text.en, /1234/);
+  assert.doesNotMatch(knowledge.text.en, /sample-password/);
+});
+
+test("public guide section helper only exposes host-approved sections", async () => {
+  const { getPublicStayGuideSections } = await import("../lib/public-guide.js");
+  const sections = getPublicStayGuideSections({
+    approvedStayGuide: [
+      {
+        id: "draft",
+        hostApproved: false,
+        body: { en: "Draft body" }
+      },
+      {
+        id: "approved",
+        hostApproved: true,
+        body: { en: "Approved body" }
+      }
+    ]
+  });
+
+  assert.deepEqual(sections.map((section) => section.id), ["approved"]);
+});
+
+test("external URL policy blocks script-like URLs and limits Telegram links", async () => {
+  const { safeExternalUrl, safeTelegramBotUrl } = await import("../lib/url-policy.js");
+
+  assert.equal(safeExternalUrl("https://example.com/stay"), "https://example.com/stay");
+  assert.equal(safeExternalUrl("javascript:alert(1)"), "#");
+  assert.equal(safeExternalUrl("data:text/html,hello"), "#");
+  assert.equal(safeTelegramBotUrl("https://t.me/example_stay_bot"), "https://t.me/example_stay_bot");
+  assert.equal(safeTelegramBotUrl("https://evil.example.com/example_stay_bot"), "");
+});
+
+test("Telegram webhook security requires the configured secret header", async () => {
+  const { isAuthorizedTelegramWebhook, parseJsonBody } = await import("../adapters/telegram/security.js");
+
+  assert.equal(isAuthorizedTelegramWebhook({ headers: {} }, "secret"), false);
+  assert.equal(
+    isAuthorizedTelegramWebhook({
+      headers: {
+        "x-telegram-bot-api-secret-token": "secret"
+      }
+    }, "secret"),
+    true
+  );
+  assert.deepEqual(parseJsonBody("{bad json").ok, false);
+  assert.deepEqual(parseJsonBody("{\"ok\":true}"), { ok: true, value: { ok: true } });
+});
+
+test("fetch timeout helper passes an abort signal to outbound requests", async () => {
+  const { fetchWithTimeout } = await import("../lib/http.js");
+  let observedSignal = null;
+
+  const response = await fetchWithTimeout("https://example.com", {
+    fetchImpl: async (_url, options) => {
+      observedSignal = options.signal;
+      return { ok: true };
+    },
+    timeoutMs: 50
+  });
+
+  assert.equal(response.ok, true);
+  assert.ok(observedSignal);
+  assert.equal(observedSignal.aborted, false);
 });
 
 test("FAQ matching only returns host-approved answers", () => {

@@ -4,14 +4,20 @@ import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import {
+  buildApprovedKnowledgeBase,
   buildHostReviewAck,
   resolveGuestReply
 } from "../../lib/guest-ops.js";
+import { fetchWithTimeout } from "../../lib/http.js";
 import {
   createHostTicket,
   formatHostNotification,
   parseHostReplyCommand
 } from "./tickets.js";
+import {
+  isAuthorizedTelegramWebhook,
+  parseJsonBody
+} from "./security.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -21,6 +27,7 @@ const PORT = Number(process.env.PORT || 8787);
 const WEBHOOK_PATH = process.env.PUBLIC_WEBHOOK_PATH || "/telegram/webhook";
 const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN || "";
 const TELEGRAM_ADMIN_SECRET = process.env.TELEGRAM_ADMIN_SECRET || "";
+const TELEGRAM_WEBHOOK_SECRET = process.env.TELEGRAM_WEBHOOK_SECRET || "";
 const PROPERTY_CONFIG_PATH = resolve(
   __dirname,
   process.env.PROPERTY_CONFIG_PATH || "../../config.example.json"
@@ -65,14 +72,15 @@ async function sendTelegramMessage(chatId, text) {
     return;
   }
 
-  const response = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+  const response = await fetchWithTimeout(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify({
       chat_id: chatId,
       text,
       disable_web_page_preview: true
-    })
+    }),
+    timeoutMs: 8_000
   });
 
   if (!response.ok) {
@@ -84,7 +92,7 @@ async function sendTelegramMessage(chatId, text) {
 async function callHermesAgent({ message, language, config }) {
   if (!process.env.HERMES_AGENT_URL) return null;
 
-  const response = await fetch(process.env.HERMES_AGENT_URL, {
+  const response = await fetchWithTimeout(process.env.HERMES_AGENT_URL, {
     method: "POST",
     headers: {
       "content-type": "application/json",
@@ -96,7 +104,7 @@ async function callHermesAgent({ message, language, config }) {
       propertyId: config.property?.id,
       language,
       message,
-      approvedKnowledge: config.approvedKnowledge,
+      approvedKnowledge: buildApprovedKnowledgeBase(config),
       sources: (config.sources || []).map(({ type, url, hostConfirmed, lastReviewedAt }) => ({
         type,
         url,
@@ -104,11 +112,16 @@ async function callHermesAgent({ message, language, config }) {
         lastReviewedAt
       })),
       safety: config.safety
-    })
+    }),
+    timeoutMs: 10_000
   });
 
   if (!response.ok) return null;
-  return response.json();
+  try {
+    return await response.json();
+  } catch {
+    return null;
+  }
 }
 
 async function registerHost(chatId, text) {
@@ -277,9 +290,21 @@ const server = createServer(async (request, response) => {
       return;
     }
 
+    if (!isAuthorizedTelegramWebhook(request, TELEGRAM_WEBHOOK_SECRET)) {
+      response.writeHead(401, { "content-type": "application/json" });
+      response.end(JSON.stringify({ error: "unauthorized" }));
+      return;
+    }
+
     const body = await readRequestBody(request);
-    const update = JSON.parse(body || "{}");
-    await handleGuestMessage(update);
+    const parsedBody = parseJsonBody(body);
+    if (!parsedBody.ok) {
+      response.writeHead(400, { "content-type": "application/json" });
+      response.end(JSON.stringify({ error: parsedBody.error }));
+      return;
+    }
+
+    await handleGuestMessage(parsedBody.value);
 
     response.writeHead(200, { "content-type": "application/json" });
     response.end(JSON.stringify({ ok: true }));
@@ -293,4 +318,3 @@ const server = createServer(async (request, response) => {
 server.listen(PORT, () => {
   console.log(`Telegram adapter listening on http://localhost:${PORT}${WEBHOOK_PATH}`);
 });
-
