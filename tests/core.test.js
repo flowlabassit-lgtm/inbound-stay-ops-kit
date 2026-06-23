@@ -199,6 +199,64 @@ test("public guide section helper only exposes host-approved sections", async ()
   assert.deepEqual(sections.map((section) => section.id), ["approved"]);
 });
 
+test("public local guide helper only exposes host-approved recommendations", async () => {
+  const { getPublicLocalRecommendations } = await import("../lib/public-guide.js");
+  const recommendations = getPublicLocalRecommendations({
+    localGuide: {
+      recommendations: [
+        {
+          id: "draft-tabelog-place",
+          hostApproved: false,
+          name: { en: "UNAPPROVED draft place" },
+          copiedReviewText: "UNAPPROVED copied review text"
+        },
+        {
+          id: "approved-breakfast",
+          hostApproved: true,
+          category: "breakfast",
+          name: { en: "Host Approved Breakfast" },
+          description: { en: "A simple nearby breakfast option." },
+          sourceType: "google_places",
+          sourceUrl: "https://maps.google.com/?q=breakfast",
+          lastReviewedAt: "2026-06-23"
+        }
+      ]
+    }
+  });
+
+  assert.deepEqual(recommendations.map((item) => item.id), ["approved-breakfast"]);
+  assert.equal(recommendations[0].copiedReviewText, undefined);
+  assert.equal(recommendations[0].sourceUrl, "https://maps.google.com/?q=breakfast");
+});
+
+test("public local guide boundary stays official-api or host-approved only", async () => {
+  const { getLocalGuideBoundary } = await import("../lib/public-guide.js");
+  const boundary = getLocalGuideBoundary({
+    localGuide: {
+      apiProxy: {
+        enabled: false,
+        endpoint: ""
+      }
+    }
+  });
+
+  assert.match(boundary.en, /official place APIs/);
+  assert.match(boundary.en, /host-approved recommendations/);
+  assert.match(boundary.en, /does not scrape/);
+});
+
+test("guest page exposes local guide slots without client-side provider secrets", async () => {
+  const indexHtml = await readFile(resolve(projectRoot, "index.html"), "utf8");
+  const appJs = await readFile(resolve(projectRoot, "assets", "app.js"), "utf8");
+
+  assert.match(indexHtml, /id="local-guide"/);
+  assert.match(indexHtml, /id="local-guide-list"/);
+  assert.match(indexHtml, /id="local-guide-boundary"/);
+  assert.match(appJs, /getPublicLocalRecommendations/);
+  assert.match(appJs, /getLocalGuideBoundary/);
+  assert.doesNotMatch(appJs, /GOOGLE_PLACES_API_KEY|KAKAO_REST_API_KEY|NAVER_SEARCH_CLIENT_SECRET/);
+});
+
 test("external URL policy blocks script-like URLs and limits Telegram links", async () => {
   const { safeExternalUrl, safeTelegramBotUrl } = await import("../lib/url-policy.js");
 
@@ -480,6 +538,11 @@ test("demo config is a public Pages fallback with four guest languages", async (
   assert.deepEqual(config.property.supportedLanguages, languages);
   assert.equal(config.demo.publicDemo, true);
   assert.ok(config.approvedStayGuide.length >= 4);
+  assert.ok(config.localGuide?.recommendations?.length >= 2);
+  assert.equal(
+    config.localGuide.recommendations.every((item) => item.hostApproved === true && !item.copiedReviewText),
+    true
+  );
 
   for (const section of config.approvedStayGuide) {
     assert.equal(section.hostApproved, true);

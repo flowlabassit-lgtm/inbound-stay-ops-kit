@@ -1,5 +1,9 @@
 import { loadConfigFromCandidates } from "../lib/config-loader.js";
-import { getPublicStayGuideSections } from "../lib/public-guide.js";
+import {
+  getLocalGuideBoundary,
+  getPublicLocalRecommendations,
+  getPublicStayGuideSections
+} from "../lib/public-guide.js";
 import { safeExternalUrl, safeTelegramBotUrl } from "../lib/url-policy.js";
 import {
   buildApprovedKnowledgeBase,
@@ -119,6 +123,18 @@ const fallbackCopy = {
     ko: "호스트 확인 대기",
     ja: "ホスト確認待ち",
     zh: "等待房东确认"
+  },
+  localGuideTitle: {
+    en: "Nearby Tips"
+  },
+  localGuideIntro: {
+    en: "Host-approved local recommendations and official source links. The static kit never stores provider API keys."
+  },
+  localGuideEmpty: {
+    en: "No host-approved nearby tips yet."
+  },
+  localGuideSource: {
+    en: "Source"
   }
 };
 
@@ -302,6 +318,86 @@ function renderSources(config) {
   }
 }
 
+function renderLocalGuide(config) {
+  const panel = document.querySelector("#local-guide");
+  const list = document.querySelector("#local-guide-list");
+  const boundary = document.querySelector("#local-guide-boundary");
+  const recommendations = getPublicLocalRecommendations(config);
+
+  document.querySelector("#local-guide-title").textContent = copy("localGuideTitle");
+  document.querySelector("#local-guide-intro").textContent = copy("localGuideIntro");
+  list.innerHTML = "";
+
+  if (recommendations.length === 0) {
+    const empty = document.createElement("p");
+    empty.className = "muted";
+    empty.textContent = copy("localGuideEmpty");
+    list.append(empty);
+  }
+
+  for (const recommendation of recommendations) {
+    const item = document.createElement("article");
+    item.className = "local-guide-item";
+
+    const header = document.createElement("div");
+    header.className = "local-guide-header";
+
+    const title = document.createElement("strong");
+    title.textContent = localized(recommendation.name, state.language) || recommendation.id;
+    header.append(title);
+
+    if (recommendation.category) {
+      const category = document.createElement("span");
+      category.className = "source-pill";
+      category.textContent = recommendation.category.replace(/_/g, " ");
+      header.append(category);
+    }
+
+    item.append(header);
+
+    const description = localized(recommendation.description, state.language);
+    if (description) {
+      const paragraph = document.createElement("p");
+      paragraph.textContent = description;
+      item.append(paragraph);
+    }
+
+    const meta = document.createElement("div");
+    meta.className = "local-guide-meta";
+
+    const distance = localized(recommendation.distanceText, state.language);
+    if (distance) {
+      const distanceNode = document.createElement("span");
+      distanceNode.textContent = distance;
+      meta.append(distanceNode);
+    }
+
+    if (recommendation.sourceType) {
+      const sourceType = document.createElement("span");
+      sourceType.textContent = recommendation.sourceType.replace(/_/g, " ");
+      meta.append(sourceType);
+    }
+
+    if (recommendation.sourceUrl) {
+      const href = safeExternalUrl(recommendation.sourceUrl);
+      if (href !== "#") {
+        const source = document.createElement("a");
+        source.href = href;
+        source.target = "_blank";
+        source.rel = "noreferrer";
+        source.textContent = copy("localGuideSource");
+        meta.append(source);
+      }
+    }
+
+    item.append(meta);
+    list.append(item);
+  }
+
+  boundary.textContent = localized(getLocalGuideBoundary(config), state.language);
+  panel.hidden = false;
+}
+
 async function askAgent(question) {
   const endpoint = state.config.agent?.enabled ? state.config.agent?.endpoint : "";
   if (!endpoint) return null;
@@ -391,6 +487,7 @@ function render() {
 
   renderChromeCopy();
   renderStayGuide(config);
+  renderLocalGuide(config);
   renderSources(config);
 
   const box = document.querySelector("#answer-box");

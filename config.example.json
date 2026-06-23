@@ -20,6 +20,44 @@
     "mode": "hermes",
     "note": "Use a public proxy endpoint only. Do not put secret API keys in this static config."
   },
+  "localGuide": {
+    "mode": "host_approved_static",
+    "apiProxy": {
+      "enabled": false,
+      "endpoint": "",
+      "note": "Official place APIs must run through a server-side proxy. Do not put Google, Kakao, Naver, Yelp, or other provider API keys in this static file."
+    },
+    "boundary": {
+      "en": "Nearby recommendations are host-approved notes or official source links. This static kit does not scrape maps, review pages, logged-in services, or copied review text.",
+      "ko": "주변 추천은 호스트가 승인한 메모 또는 공식 출처 링크만 사용합니다. 이 정적 킷은 지도, 리뷰 페이지, 로그인 서비스, 복사한 리뷰 본문을 스크래핑하지 않습니다.",
+      "ja": "周辺おすすめはホスト承認済みメモ、または公式ソースリンクのみを使います。この静的キットは地図、レビューサイト、ログイン必須サービス、コピーしたレビュー本文をスクレイピングしません。"
+    },
+    "recommendations": [
+      {
+        "id": "station-cafe",
+        "hostApproved": true,
+        "category": "cafe",
+        "name": {
+          "en": "Station cafe candidate",
+          "ko": "역 근처 카페 후보",
+          "ja": "駅近くのカフェ候補"
+        },
+        "description": {
+          "en": "A host-approved nearby cafe candidate for light breakfast or coffee.",
+          "ko": "간단한 아침이나 커피가 필요할 때 안내할 수 있는 호스트 승인 주변 카페 후보입니다.",
+          "ja": "軽い朝食やコーヒー向けに案内できる、ホスト承認済みの近隣カフェ候補です。"
+        },
+        "distanceText": {
+          "en": "About 5 minutes on foot",
+          "ko": "도보 약 5분",
+          "ja": "徒歩約5分"
+        },
+        "sourceType": "official_place_link",
+        "sourceUrl": "https://www.google.com/maps/search/?api=1&query=cafe%20near%20Hongdae%20Station",
+        "lastReviewedAt": "2026-06-23"
+      }
+    ]
+  },
   "sources": [
     {
       "type": "airbnb",

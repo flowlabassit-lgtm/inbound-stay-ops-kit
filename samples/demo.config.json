@@ -23,6 +23,53 @@
     "enabled": false,
     "endpoint": "/api/guest-agent"
   },
+  "localGuide": {
+    "mode": "host_approved_static",
+    "apiProxy": {
+      "enabled": false,
+      "endpoint": "",
+      "note": "Official place APIs must run through a server-side proxy. Do not put provider API keys in this static config."
+    },
+    "boundary": {
+      "en": "Nearby tips are host-approved examples or links to official place sources. This public demo does not scrape maps, review pages, logged-in services, or copied review text."
+    },
+    "recommendations": [
+      {
+        "id": "morning-cafe",
+        "hostApproved": true,
+        "category": "breakfast",
+        "name": {
+          "en": "Morning cafe near the station"
+        },
+        "description": {
+          "en": "A simple breakfast and coffee candidate for guests who want something close before checkout."
+        },
+        "distanceText": {
+          "en": "About 6 minutes on foot"
+        },
+        "sourceType": "google_places_link",
+        "sourceUrl": "https://www.google.com/maps/search/?api=1&query=coffee%20near%20Central%20Station",
+        "lastReviewedAt": "2026-06-23"
+      },
+      {
+        "id": "rainy-day-market",
+        "hostApproved": true,
+        "category": "local_walk",
+        "name": {
+          "en": "Covered market walk"
+        },
+        "description": {
+          "en": "A nearby covered-market style stop for rainy days or a short local walk."
+        },
+        "distanceText": {
+          "en": "About 12 minutes on foot"
+        },
+        "sourceType": "host_approved_tip",
+        "sourceUrl": "https://www.google.com/maps/search/?api=1&query=market%20near%20Central%20Station",
+        "lastReviewedAt": "2026-06-23"
+      }
+    ]
+  },
   "sources": [
     {
       "type": "airbnb",

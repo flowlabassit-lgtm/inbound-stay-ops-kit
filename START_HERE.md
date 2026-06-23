@@ -8,6 +8,7 @@ You are building a small guest-help system for one stay:
 
 - A public page guests can open before asking repeated questions
 - A translated stay guide based on host-approved Airbnb or booking-platform text
+- Host-approved nearby recommendations with official source links
 - An agent question box for anything not covered in the guide
 - A Telegram bot that answers approved questions or routes them to the host
 - A Telegram handoff path when the host must answer directly
@@ -17,6 +18,7 @@ You are building a small guest-help system for one stay:
 Do not let the bot invent stay facts.
 
 Airbnb, Booking.com, Agoda, Vrbo, or your own website can be source links. However, the bot should only answer from facts that you copied, checked, and approved in `config.json`.
+Nearby recommendations work the same way: use host-approved notes and source links. Do not paste copied review text or provider API keys into the public static config.
 
 For Airbnb stays, do not place this external guide link inside the Airbnb listing or Airbnb message thread unless Airbnb explicitly allows it for your situation. Use this kit to create translated content that you can paste back into Airbnb, or provide the guide as an optional QR/resource inside the property.
 

@@ -29,6 +29,7 @@ Host-approved listing text
 - Translated stay guide built from host-approved Airbnb or booking-platform text
 - Internal FAQ / answer bank for the agent and Telegram bot
 - Host-approved source workflow for Airbnb or other booking-platform links
+- Host-approved local recommendations with official source links
 - Safety rules for blocked and host-review questions
 - Telegram Bot adapter
 - Host handoff tickets through Telegram
@@ -40,10 +41,12 @@ Host-approved listing text
 - Kakao automated integration
 - LINE automated integration
 - WhatsApp automated integration
+- Live local place API proxy and provider-specific integrations
 - Property-specific implementation service
 - Pricing diagnosis report
 
 Manual links to official listings are allowed in the free kit. Automated non-Telegram messenger integration is not included.
+Manual links to local place sources are allowed. Live provider APIs must run behind a server-side proxy, not directly in the static page.
 
 ## Quick Links
 
@@ -51,6 +54,7 @@ Manual links to official listings are allowed in the free kit. Automated non-Tel
 - English quickstart: `docs/quickstart-en.md`
 - Japanese quickstart: `docs/quickstart-ja.md`
 - Airbnb policy boundary: `docs/airbnb-policy-boundary.md`
+- Local guide boundary: `docs/local-guide-boundary.md`
 - Host setup workflow: `docs/host-content-workflow.md`
 - Language routing: `docs/language-routing.md`
 - Telegram dry-run: `docs/telegram-dry-run-rehearsal.md`
@@ -59,8 +63,10 @@ Manual links to official listings are allowed in the free kit. Automated non-Tel
 ## Safety Model
 
 This kit does not scrape Airbnb or booking platforms.
+It also does not scrape maps, review pages, or logged-in local services.
 
 Platform links are stored as source references. The bot only uses text that the host pasted, reviewed, and approved into `config.json`.
+Local recommendations follow the same rule: the static page only exposes host-approved notes and source links. Do not put provider API keys or copied review text in `config.json`.
 
 For Airbnb stays, do not put this external guide link in an Airbnb listing description or Airbnb message thread unless Airbnb explicitly allows it for your situation. Use the kit to create translated guide content that can be pasted back into Airbnb, or provide the guide as an optional in-stay resource such as a QR code inside the property.
 
