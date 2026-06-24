@@ -9,11 +9,16 @@ import {
   resolveGuestReply
 } from "../../lib/guest-ops.js";
 import { fetchWithTimeout } from "../../lib/http.js";
+import { resolveMessageLanguage } from "../../lib/language.js";
 import {
   createHostTicket,
   formatHostNotification,
   parseHostReplyCommand
 } from "./tickets.js";
+import {
+  prepareHostReplyForGuest,
+  translateHostReplyWithHttp
+} from "./translation.js";
 import {
   isAuthorizedTelegramWebhook,
   parseJsonBody
@@ -158,13 +163,36 @@ async function answerTicketAsHost(chatId, text) {
     return;
   }
 
+  const config = await loadConfig();
+  const preparedReply = await prepareHostReplyForGuest({
+    hostMessage: command.message,
+    ticket,
+    translateText: process.env.HOST_REPLY_TRANSLATION_URL
+      ? ({ text: replyText, targetLanguage }) =>
+          translateHostReplyWithHttp({
+            text: replyText,
+            targetLanguage,
+            ticket,
+            config,
+            fetchImpl: fetchWithTimeout
+          })
+      : null
+  });
+
   ticket.status = "answered";
   ticket.hostReply = command.message;
+  ticket.hostReplyDelivered = preparedReply.deliveredText;
+  ticket.hostReplyLanguage = preparedReply.targetLanguage;
+  ticket.hostReplyTranslated = preparedReply.translated;
+  ticket.hostReplyTranslationReason = preparedReply.reason;
   ticket.answeredAt = new Date().toISOString();
   await writeJson(TICKET_STORE_PATH, store);
 
-  await sendTelegramMessage(ticket.guestChatId, `Host reply:\n${command.message}`);
-  await sendTelegramMessage(chatId, `Sent to guest for ticket ${ticket.id}.`);
+  await sendTelegramMessage(ticket.guestChatId, preparedReply.guestMessage);
+  const translationNote = preparedReply.translated
+    ? ` Translated to ${preparedReply.targetLanguage}.`
+    : " Sent without translation.";
+  await sendTelegramMessage(chatId, `Sent to guest for ticket ${ticket.id}.${translationNote}`);
 }
 
 async function handoffToHost({ chatId, language, text, config, reply }) {
@@ -226,7 +254,12 @@ async function handleGuestMessage(update) {
     return;
   }
 
-  const language = message.from?.language_code?.slice(0, 2) || config.property?.defaultLanguage || "en";
+  const language = resolveMessageLanguage({
+    text,
+    platformLanguage: message.from?.language_code,
+    supportedLanguages: config.property?.supportedLanguages || [],
+    defaultLanguage: config.property?.defaultLanguage || "en"
+  });
   const reply = resolveGuestReply(text, config, language);
 
   if (reply.action === "blocked") {

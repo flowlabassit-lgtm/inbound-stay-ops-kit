@@ -13,7 +13,8 @@ Guest asks Telegram bot
 -> host ticket if confirmation is needed
 -> host receives ticket in Telegram
 -> host replies with /reply TICKET_ID message
--> bot sends the host reply to the guest
+-> bot translates the host reply to the saved guest language when translation is configured
+-> bot sends the translated or fallback host reply to the guest
 ```
 
 ## Setup
@@ -33,7 +34,36 @@ See `docs/telegram-dry-run-rehearsal.md`.
 4. Set `TELEGRAM_BOT_TOKEN`.
 5. Set a private `TELEGRAM_ADMIN_SECRET`.
 6. Set a private `TELEGRAM_WEBHOOK_SECRET`. Use the same value when registering the Telegram webhook.
-7. Start the server:
+7. Optional: set `HOST_REPLY_TRANSLATION_URL` if you want host replies translated before they are delivered to guests. The endpoint should accept:
+
+```json
+{
+  "text": "Host reply text",
+  "targetLocale": "ja",
+  "source": "telegram_host_reply",
+  "ticketId": "TABC123",
+  "propertyId": "sample-stay",
+  "propertyName": "Sample Stay"
+}
+```
+
+and return one of:
+
+```json
+{ "translation": "Translated text" }
+```
+
+```json
+{ "translations": "Translated text" }
+```
+
+```json
+{ "translations": ["Translated text"] }
+```
+
+If `HOST_REPLY_TRANSLATION_URL` is not configured, the bot sends the host's original reply and tells the host it was sent without translation.
+
+8. Start the server:
 
 ```bash
 cd adapters/telegram
@@ -69,12 +99,14 @@ The host replies:
 /reply TABC123 Yes, 11:30 is possible today.
 ```
 
-The guest receives:
+If `HOST_REPLY_TRANSLATION_URL` is configured and the guest language is `ja`, the guest receives:
 
 ```text
-Host reply:
-Yes, 11:30 is possible today.
+ホストからの返信:
+はい、本日は11:30にチェックインできます。
 ```
+
+If translation is not configured or the translation endpoint fails, the guest receives the original host reply.
 
 ## Webhook
 

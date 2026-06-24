@@ -16,11 +16,16 @@ import {
 } from "../adapters/telegram/tickets.js";
 import {
   LANGUAGE_STORAGE_KEY,
+  detectLanguageFromText,
   readStoredLanguage,
   resolveGuestLanguage,
+  resolveMessageLanguage,
   normalizeLanguageTag,
   writeStoredLanguage
 } from "../lib/language.js";
+import {
+  prepareHostReplyForGuest
+} from "../adapters/telegram/translation.js";
 import {
   buildConfigDraft,
   buildSetupPrompt,
@@ -337,6 +342,53 @@ test("Telegram host ticket preserves guest chat routing and parses host reply co
   assert.match(notification, new RegExp(ticket.id));
   assert.equal(command.ticketId, ticket.id);
   assert.equal(command.message, "Yes, 11:30 is possible.");
+});
+
+test("message language resolver prefers the guest's written language over Telegram profile language", () => {
+  assert.equal(detectLanguageFromText("혹시 체크인을 11시에 할 수 있을까요?", ["ko", "en", "ja"]), "ko");
+  assert.equal(detectLanguageFromText("チェックインは11時でも大丈夫ですか？", ["ko", "en", "ja"]), "ja");
+
+  const language = resolveMessageLanguage({
+    text: "짐을 먼저 맡길 수 있나요?",
+    platformLanguage: "en-US",
+    supportedLanguages: ["ko", "en", "ja"],
+    defaultLanguage: "en"
+  });
+
+  assert.equal(language, "ko");
+});
+
+test("host reply is translated to the saved guest language before delivery", async () => {
+  const translated = await prepareHostReplyForGuest({
+    hostMessage: "네, 11시 30분에 체크인 가능합니다.",
+    ticket: {
+      id: "TABC123",
+      guestLanguage: "ja"
+    },
+    translateText: async ({ text, targetLanguage }) => {
+      assert.equal(text, "네, 11시 30분에 체크인 가능합니다.");
+      assert.equal(targetLanguage, "ja");
+      return "はい、11時30分にチェックインできます。";
+    }
+  });
+
+  assert.equal(translated.translated, true);
+  assert.equal(translated.guestMessage, "ホストからの返信:\nはい、11時30分にチェックインできます。");
+});
+
+test("host reply falls back to original text when translation is unavailable", async () => {
+  const translated = await prepareHostReplyForGuest({
+    hostMessage: "Yes, 11:30 is possible today.",
+    ticket: {
+      id: "TABC123",
+      guestLanguage: "ja"
+    },
+    translateText: async () => ""
+  });
+
+  assert.equal(translated.translated, false);
+  assert.equal(translated.guestMessage, "ホストからの返信:\nYes, 11:30 is possible today.");
+  assert.equal(translated.reason, "empty_translation");
 });
 
 test("language resolver prioritizes URL lang over stored and browser languages", () => {

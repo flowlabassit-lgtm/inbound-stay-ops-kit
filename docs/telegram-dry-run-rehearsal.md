@@ -10,7 +10,7 @@ guest question
 -> ticket creation
 -> host notification
 -> /reply command
--> guest-facing host reply
+-> guest-facing translated host reply
 ```
 
 Run:
@@ -38,9 +38,11 @@ Host -> Bot:
 /reply TABC123 Yes, 11:30 is possible today...
 
 Bot -> Guest:
-Host reply:
-Yes, 11:30 is possible today...
+ホストからの返信:
+はい、本日は11:30にチェックインできます...
+
+Translation:
+translated to ja
 ```
 
 After this works, use `docs/telegram-host-handoff.md` to connect a real bot.
-

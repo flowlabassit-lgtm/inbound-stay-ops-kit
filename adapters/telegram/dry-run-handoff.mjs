@@ -10,13 +10,16 @@ import {
   formatHostNotification,
   parseHostReplyCommand
 } from "./tickets.js";
+import {
+  prepareHostReplyForGuest
+} from "./translation.js";
 
 const configPath = resolve(import.meta.dirname, "../../config.example.json");
 const config = JSON.parse(await readFile(configPath, "utf8"));
 
 const guestChatId = 111111111;
 const hostChatId = 222222222;
-const guestLanguage = "en";
+const guestLanguage = "ja";
 const question = "Can I check in at 11am?";
 
 const reply = resolveGuestReply(question, config, guestLanguage);
@@ -30,6 +33,12 @@ const ticket = createHostTicket({
 
 const hostCommand = `/reply ${ticket.id} Yes, 11:30 is possible today. Please keep noise low while cleaning finishes.`;
 const parsed = parseHostReplyCommand(hostCommand);
+const preparedHostReply = await prepareHostReplyForGuest({
+  hostMessage: parsed.message,
+  ticket,
+  translateText: async () =>
+    "はい、本日は11:30にチェックインできます。清掃が終わるまで静かにお待ちください。"
+});
 
 const lines = [
   "# Telegram Handoff Dry Run",
@@ -47,9 +56,13 @@ const lines = [
   hostCommand,
   "",
   "Bot -> Guest:",
-  `Host reply:\n${parsed.message}`,
+  preparedHostReply.guestMessage,
+  "",
+  "Translation:",
+  preparedHostReply.translated
+    ? `translated to ${preparedHostReply.targetLanguage}`
+    : `not translated (${preparedHostReply.reason})`,
   ""
 ];
 
 console.log(lines.join("\n"));
-

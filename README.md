@@ -33,6 +33,7 @@ Host-approved listing text
 - Safety rules for blocked and host-review questions
 - Telegram Bot adapter
 - Host handoff tickets through Telegram
+- Optional host-reply translation before Telegram delivers the answer to the guest
 - Optional Hermes Agent integration guide
 - Workbooks and prompts for non-developers using Codex or Claude
 
