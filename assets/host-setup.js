@@ -18,7 +18,12 @@ function readForm() {
 function writeForm(data) {
   for (const [key, value] of Object.entries(data || {})) {
     const field = form.elements.namedItem(key);
-    if (field && typeof field.value === "string") field.value = value;
+    if (!field) continue;
+    if (field.type === "checkbox") {
+      field.checked = value === true || value === "true" || value === "on" || value === "yes";
+    } else if (typeof field.value === "string") {
+      field.value = value;
+    }
   }
 }
 
@@ -42,6 +47,9 @@ function renderWarnings(data) {
   const warnings = findSensitiveWarnings(
     [data.platformText, data.checkInNotes, data.houseRules, data.guestNotes].join("\n")
   );
+  if (data.wifiQrEnabled && data.wifiPassword) {
+    warnings.push("wifi_qr_password_keep_private");
+  }
   warningList.innerHTML = "";
   warningCount.textContent = `${warnings.length} warnings`;
 

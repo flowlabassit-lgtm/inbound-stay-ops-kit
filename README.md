@@ -30,6 +30,7 @@ Host-approved listing text
 - Internal FAQ / answer bank for the agent and Telegram bot
 - Host-approved source workflow for Airbnb or other booking-platform links
 - Host-approved local recommendations with official source links
+- Local Wi-Fi QR generator without external QR API calls
 - Safety rules for blocked and host-review questions
 - Telegram Bot adapter
 - Host handoff tickets through Telegram
@@ -56,6 +57,7 @@ Manual links to local place sources are allowed. Live provider APIs must run beh
 - Japanese quickstart: `docs/quickstart-ja.md`
 - Airbnb policy boundary: `docs/airbnb-policy-boundary.md`
 - Local guide boundary: `docs/local-guide-boundary.md`
+- Wi-Fi QR boundary: `docs/wifi-qr.md`
 - Host setup workflow: `docs/host-content-workflow.md`
 - Language routing: `docs/language-routing.md`
 - Telegram dry-run: `docs/telegram-dry-run-rehearsal.md`
@@ -68,6 +70,8 @@ It also does not scrape maps, review pages, or logged-in local services.
 
 Platform links are stored as source references. The bot only uses text that the host pasted, reviewed, and approved into `config.json`.
 Local recommendations follow the same rule: the static page only exposes host-approved notes and source links. Do not put provider API keys or copied review text in `config.json`.
+
+Wi-Fi QR generation runs locally in the browser. Do not commit real Wi-Fi passwords to a public GitHub repo. Use fake demo values in public repos, or generate a private in-stay page / printed QR after the host approves the network details.
 
 For Airbnb stays, do not put this external guide link in an Airbnb listing description or Airbnb message thread unless Airbnb explicitly allows it for your situation. Use the kit to create translated guide content that can be pasted back into Airbnb, or provide the guide as an optional in-stay resource such as a QR code inside the property.
 
@@ -149,6 +153,7 @@ node --check assets/host-setup.js
 node --check lib/guest-ops.js
 node --check lib/language.js
 node --check lib/setup-builder.js
+node --check lib/wifi-qr.js
 ```
 
 Telegram adapter:

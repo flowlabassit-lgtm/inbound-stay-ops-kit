@@ -14,6 +14,16 @@
     "botUrl": "https://t.me/your_stay_bot",
     "enabled": true
   },
+  "wifiQr": {
+    "enabled": false,
+    "hostApproved": false,
+    "ssid": "",
+    "password": "",
+    "security": "WPA",
+    "hidden": false,
+    "showPasswordText": false,
+    "note": "Do not commit real Wi-Fi passwords to a public repo. Use this only for a private in-stay page or generate a printed QR locally."
+  },
   "agent": {
     "enabled": false,
     "endpoint": "",

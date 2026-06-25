@@ -53,6 +53,30 @@
               <span>Telegram bot URL</span>
               <input name="telegramBotUrl" placeholder="https://t.me/your_stay_bot" autocomplete="off">
             </label>
+            <label class="checkbox-row">
+              <input type="checkbox" name="wifiQrEnabled">
+              <span>Enable optional Wi-Fi QR</span>
+            </label>
+            <label>
+              <span>Wi-Fi network name</span>
+              <input name="wifiSsid" value="GardenStay_Guest" autocomplete="off">
+            </label>
+            <label>
+              <span>Wi-Fi password</span>
+              <input name="wifiPassword" type="password" placeholder="Private; do not publish in public repos" autocomplete="new-password">
+            </label>
+            <label>
+              <span>Wi-Fi security</span>
+              <select name="wifiSecurity">
+                <option value="WPA">WPA / WPA2</option>
+                <option value="WEP">WEP</option>
+                <option value="nopass">No password</option>
+              </select>
+            </label>
+            <label class="checkbox-row">
+              <input type="checkbox" name="wifiHidden">
+              <span>Hidden network</span>
+            </label>
           </div>
 
           <label>
@@ -114,6 +138,6 @@
       </section>
     </main>
 
-    <script type="module" src="./assets/host-setup.js?v=20260617-host-setup"></script>
+    <script type="module" src="./assets/host-setup.js?v=20260625-wifi-qr"></script>
   </body>
 </html>

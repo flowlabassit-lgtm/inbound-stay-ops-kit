@@ -14,6 +14,10 @@ import {
   resolveGuestLanguage,
   writeStoredLanguage
 } from "../lib/language.js";
+import {
+  createQrSvgFromText,
+  getPublicWifiQrConfig
+} from "../lib/wifi-qr.js";
 
 const fallbackCopy = {
   pageEyebrow: {
@@ -135,6 +139,24 @@ const fallbackCopy = {
   },
   localGuideSource: {
     en: "Source"
+  },
+  wifiTitle: {
+    en: "Wi-Fi QR"
+  },
+  wifiIntro: {
+    en: "Scan this code to connect. The password is encoded in the QR and is hidden from the public text by default."
+  },
+  wifiNetworkLabel: {
+    en: "Network"
+  },
+  wifiPasswordHidden: {
+    en: "Password text hidden. Scan the QR code inside the stay."
+  },
+  wifiPasswordVisible: {
+    en: "Password text is host-approved for display."
+  },
+  wifiUnavailable: {
+    en: "Wi-Fi QR could not be generated. Ask the host to shorten the network name or password."
   }
 };
 
@@ -398,6 +420,38 @@ function renderLocalGuide(config) {
   panel.hidden = false;
 }
 
+function renderWifiAccess(config) {
+  const panel = document.querySelector("#wifi-access");
+  const qrCode = document.querySelector("#wifi-qr-code");
+  const wifi = getPublicWifiQrConfig(config);
+
+  if (!wifi) {
+    panel.hidden = true;
+    qrCode.innerHTML = "";
+    return;
+  }
+
+  document.querySelector("#wifi-title").textContent = copy("wifiTitle");
+  document.querySelector("#wifi-intro").textContent = copy("wifiIntro");
+  document.querySelector("#wifi-network-label").textContent = copy("wifiNetworkLabel");
+  document.querySelector("#wifi-ssid").textContent = wifi.ssid;
+  document.querySelector("#wifi-security").textContent = wifi.hidden
+    ? `${wifi.security} / hidden`
+    : wifi.security;
+  document.querySelector("#wifi-password-note").textContent = wifi.showPasswordText
+    ? copy("wifiPasswordVisible")
+    : copy("wifiPasswordHidden");
+
+  try {
+    qrCode.innerHTML = createQrSvgFromText(wifi.payload, { label: `${wifi.ssid} Wi-Fi QR` });
+  } catch (error) {
+    qrCode.textContent = copy("wifiUnavailable");
+    console.error(error);
+  }
+
+  panel.hidden = false;
+}
+
 async function askAgent(question) {
   const endpoint = state.config.agent?.enabled ? state.config.agent?.endpoint : "";
   if (!endpoint) return null;
@@ -488,6 +542,7 @@ function render() {
   renderChromeCopy();
   renderStayGuide(config);
   renderLocalGuide(config);
+  renderWifiAccess(config);
   renderSources(config);
 
   const box = document.querySelector("#answer-box");

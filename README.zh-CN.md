@@ -31,6 +31,7 @@
 - 面向Airbnb或其他预订平台链接的房东确认来源流程
 - 针对阻止问题和房东确认问题的安全规则
 - Telegram Bot adapter
+- Local Wi-Fi QR generator without external QR API calls
 - 通过Telegram发送给房东的确认工单
 - 可选的Hermes Agent集成指南
 - 面向使用Codex或Claude的非开发者的工作簿和提示词
@@ -155,4 +156,3 @@ npm start
 ## 发布
 
 发布前请查看 `RELEASE_CHECKLIST.md`。
-

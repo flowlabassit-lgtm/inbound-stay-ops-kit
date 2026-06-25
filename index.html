@@ -56,6 +56,24 @@
         <p id="local-guide-boundary" class="local-guide-boundary"></p>
       </section>
 
+      <section id="wifi-access" class="panel wifi-panel" hidden>
+        <div class="panel-header wifi-header">
+          <div>
+            <h2 id="wifi-title">Wi-Fi QR</h2>
+            <p id="wifi-intro" class="muted">Scan to connect to the host-approved guest network.</p>
+          </div>
+          <span id="wifi-security" class="source-pill"></span>
+        </div>
+        <div class="wifi-content">
+          <div class="wifi-copy">
+            <span id="wifi-network-label" class="wifi-label">Network</span>
+            <strong id="wifi-ssid"></strong>
+            <p id="wifi-password-note" class="muted"></p>
+          </div>
+          <div id="wifi-qr-code" class="wifi-qr-code" aria-live="polite"></div>
+        </div>
+      </section>
+
       <section class="panel">
         <h2 id="source-title">Source Links</h2>
         <p id="source-intro" class="muted">These links help guests verify the official listing. The page does not scrape them automatically.</p>
@@ -63,6 +81,6 @@
       </section>
     </main>
 
-    <script type="module" src="./assets/app.js?v=20260623-local-guide"></script>
+    <script type="module" src="./assets/app.js?v=20260625-wifi-qr"></script>
   </body>
 </html>

@@ -19,6 +19,16 @@
     "enabled": false,
     "botUrl": ""
   },
+  "wifiQr": {
+    "enabled": true,
+    "hostApproved": true,
+    "ssid": "HarborLoft_Guest",
+    "password": "demo-password-change-me",
+    "security": "WPA",
+    "hidden": false,
+    "showPasswordText": false,
+    "note": "Fake demo password only. Replace this in a private in-stay deployment or print a local QR."
+  },
   "agent": {
     "enabled": false,
     "endpoint": "/api/guest-agent"

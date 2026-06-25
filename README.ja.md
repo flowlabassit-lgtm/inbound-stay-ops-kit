@@ -31,6 +31,7 @@
 - Airbnbまたは他の予約プラットフォームリンク用のホスト承認ソースワークフロー
 - ブロック質問とホスト確認質問のための安全ルール
 - Telegram Bot adapter
+- Local Wi-Fi QR generator without external QR API calls
 - Telegramによるホスト確認チケット
 - 任意のHermes Agent連携ガイド
 - CodexまたはClaudeを使う非開発者向けワークブックとプロンプト
@@ -155,4 +156,3 @@ npm start
 ## リリース
 
 公開前に `RELEASE_CHECKLIST.md` を確認してください。
-

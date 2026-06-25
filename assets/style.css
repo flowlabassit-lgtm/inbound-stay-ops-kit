@@ -377,6 +377,53 @@ button:hover,
   line-height: 1.55;
 }
 
+.wifi-content {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(168px, 220px);
+  gap: 18px;
+  align-items: center;
+  margin-top: 16px;
+}
+
+.wifi-copy {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.wifi-label {
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0;
+}
+
+.wifi-copy strong {
+  font-size: 1.12rem;
+  overflow-wrap: anywhere;
+}
+
+.wifi-copy p {
+  margin: 0;
+  line-height: 1.55;
+}
+
+.wifi-qr-code {
+  display: grid;
+  justify-items: end;
+}
+
+.wifi-qr-code svg {
+  display: block;
+  width: min(100%, 188px);
+  height: auto;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  padding: 10px;
+}
+
 .source-list {
   display: grid;
   gap: 0;
@@ -431,6 +478,26 @@ button:hover,
   gap: 6px;
   color: var(--muted);
   font-size: 0.86rem;
+}
+
+.setup-form .checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+}
+
+.checkbox-row input[type="checkbox"] {
+  width: 18px;
+  min-width: 18px;
+  height: 18px;
+  min-height: 18px;
+  accent-color: var(--accent);
+}
+
+.checkbox-row span {
+  color: var(--ink);
+  font-weight: 700;
 }
 
 .setup-form input,
@@ -540,5 +607,17 @@ button:hover,
   .panel-header {
     align-items: stretch;
     flex-direction: column;
+  }
+
+  .wifi-content {
+    grid-template-columns: 1fr;
+  }
+
+  .wifi-qr-code {
+    justify-items: start;
+  }
+
+  .wifi-qr-code svg {
+    width: min(100%, 210px);
   }
 }

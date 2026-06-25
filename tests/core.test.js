@@ -24,6 +24,11 @@ import {
   writeStoredLanguage
 } from "../lib/language.js";
 import {
+  buildWifiQrPayload,
+  createQrSvgFromText,
+  getPublicWifiQrConfig
+} from "../lib/wifi-qr.js";
+import {
   prepareHostReplyForGuest
 } from "../adapters/telegram/translation.js";
 import {
@@ -260,6 +265,72 @@ test("guest page exposes local guide slots without client-side provider secrets"
   assert.match(appJs, /getPublicLocalRecommendations/);
   assert.match(appJs, /getLocalGuideBoundary/);
   assert.doesNotMatch(appJs, /GOOGLE_PLACES_API_KEY|KAKAO_REST_API_KEY|NAVER_SEARCH_CLIENT_SECRET/);
+});
+
+test("Wi-Fi QR payload escapes reserved fields and hides password text by default", () => {
+  const config = getPublicWifiQrConfig({
+    wifiQr: {
+      enabled: true,
+      hostApproved: true,
+      ssid: "Garden;Stay:Guest",
+      password: "pa;ss:word\\demo",
+      security: "WPA",
+      hidden: true
+    }
+  });
+
+  assert.equal(config.ssid, "Garden;Stay:Guest");
+  assert.equal(config.security, "WPA");
+  assert.equal(config.hidden, true);
+  assert.equal(config.showPasswordText, false);
+  assert.equal(
+    config.payload,
+    "WIFI:T:WPA;S:Garden\\;Stay\\:Guest;P:pa\\;ss\\:word\\\\demo;H:true;;"
+  );
+  assert.equal(
+    buildWifiQrPayload({
+      ssid: "Lobby WiFi",
+      security: "nopass"
+    }),
+    "WIFI:T:nopass;S:Lobby WiFi;;"
+  );
+});
+
+test("Wi-Fi QR generator creates a local SVG without exposing payload as text", () => {
+  const payload = buildWifiQrPayload({
+    ssid: "HarborLoft_Guest",
+    password: "demo-password-change-me",
+    security: "WPA"
+  });
+  const svg = createQrSvgFromText(payload, { label: "Demo Wi-Fi QR" });
+
+  assert.match(svg, /^<svg /);
+  assert.match(svg, /viewBox="0 0 [0-9]+ [0-9]+"/);
+  assert.match(svg, /<path d="/);
+  assert.doesNotMatch(svg, /demo-password-change-me/);
+  assert.doesNotMatch(svg, /api\.qrserver|chart\.googleapis|quickchart/);
+});
+
+test("guest page exposes Wi-Fi QR slots without external QR services", async () => {
+  const indexHtml = await readFile(resolve(projectRoot, "index.html"), "utf8");
+  const appJs = await readFile(resolve(projectRoot, "assets", "app.js"), "utf8");
+
+  assert.match(indexHtml, /id="wifi-access"/);
+  assert.match(indexHtml, /id="wifi-qr-code"/);
+  assert.match(appJs, /getPublicWifiQrConfig/);
+  assert.match(appJs, /createQrSvgFromText/);
+  assert.doesNotMatch(indexHtml + appJs, /api\.qrserver|chart\.googleapis|quickchart/);
+});
+
+test("host setup exposes optional Wi-Fi QR fields", async () => {
+  const setupHtml = await readFile(resolve(projectRoot, "host-setup.html"), "utf8");
+  const setupJs = await readFile(resolve(projectRoot, "assets", "host-setup.js"), "utf8");
+
+  assert.match(setupHtml, /name="wifiQrEnabled"/);
+  assert.match(setupHtml, /name="wifiSsid"/);
+  assert.match(setupHtml, /name="wifiPassword"/);
+  assert.match(setupHtml, /name="wifiSecurity"/);
+  assert.match(setupJs, /type === "checkbox"/);
 });
 
 test("external URL policy blocks script-like URLs and limits Telegram links", async () => {
@@ -519,6 +590,40 @@ test("setup builder creates an unapproved config draft for host review", () => {
   assert.equal(draft.approvedStayGuide[0].hostApproved, false);
   assert.equal(draft.approvedStayGuide[0].body.en, "Self check-in from 15:00.");
   assert.ok(draft.safety.blockedTopics.length > 0);
+});
+
+test("setup builder keeps Wi-Fi QR opt-in local and unapproved by default", () => {
+  const draft = buildConfigDraft({
+    propertyName: "Sample Seoul Stay",
+    supportedLanguages: "en",
+    defaultLanguage: "en",
+    wifiQrEnabled: "on",
+    wifiSsid: "GardenStay_Guest",
+    wifiPassword: "do-not-publish",
+    wifiSecurity: "WPA",
+    wifiHidden: "on"
+  });
+  const prompt = buildSetupPrompt({
+    propertyName: "Sample Seoul Stay",
+    supportedLanguages: "en",
+    defaultLanguage: "en",
+    wifiQrEnabled: "on",
+    wifiSsid: "GardenStay_Guest",
+    wifiPassword: "do-not-publish",
+    wifiSecurity: "WPA",
+    wifiHidden: "on"
+  });
+
+  assert.equal(draft.wifiQr.enabled, true);
+  assert.equal(draft.wifiQr.hostApproved, false);
+  assert.equal(draft.wifiQr.ssid, "GardenStay_Guest");
+  assert.equal(draft.wifiQr.password, "do-not-publish");
+  assert.equal(draft.wifiQr.hidden, true);
+  assert.equal(draft.wifiQr.showPasswordText, false);
+  assert.match(prompt, /Wi-Fi QR requested: yes/);
+  assert.match(prompt, /Wi-Fi SSID: GardenStay_Guest/);
+  assert.match(prompt, /Wi-Fi password provided: yes/);
+  assert.doesNotMatch(prompt, /do-not-publish/);
 });
 
 test("public sample configs are valid and keep source facts host-reviewed", async () => {
