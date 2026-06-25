@@ -443,7 +443,10 @@ function renderWifiAccess(config) {
     : copy("wifiPasswordHidden");
 
   try {
-    qrCode.innerHTML = createQrSvgFromText(wifi.payload, { label: `${wifi.ssid} Wi-Fi QR` });
+    qrCode.innerHTML = createQrSvgFromText(wifi.payload, {
+      label: `${wifi.ssid} Wi-Fi QR`,
+      scale: 4
+    });
   } catch (error) {
     qrCode.textContent = copy("wifiUnavailable");
     console.error(error);

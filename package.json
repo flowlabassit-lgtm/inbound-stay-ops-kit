@@ -12,6 +12,7 @@
     "multilingual"
   ],
   "scripts": {
-    "test": "node tests/core.test.js"
+    "test": "node tests/core.test.js",
+    "wifi:qr:scan": "python scripts/verify-wifi-qr-scan.py"
   }
 }

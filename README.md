@@ -156,6 +156,12 @@ node --check lib/setup-builder.js
 node --check lib/wifi-qr.js
 ```
 
+Optional Wi-Fi QR scan check, if your local Python has OpenCV:
+
+```bash
+npm run wifi:qr:scan
+```
+
 Telegram adapter:
 
 ```bash

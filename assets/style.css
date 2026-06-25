@@ -379,7 +379,7 @@ button:hover,
 
 .wifi-content {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(168px, 220px);
+  grid-template-columns: minmax(0, 1fr) minmax(188px, 220px);
   gap: 18px;
   align-items: center;
   margin-top: 16px;
@@ -416,7 +416,8 @@ button:hover,
 
 .wifi-qr-code svg {
   display: block;
-  width: min(100%, 188px);
+  width: auto;
+  max-width: 100%;
   height: auto;
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -615,9 +616,5 @@ button:hover,
 
   .wifi-qr-code {
     justify-items: start;
-  }
-
-  .wifi-qr-code svg {
-    width: min(100%, 210px);
   }
 }

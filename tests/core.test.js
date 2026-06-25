@@ -314,12 +314,15 @@ test("Wi-Fi QR generator creates a local SVG without exposing payload as text", 
 test("guest page exposes Wi-Fi QR slots without external QR services", async () => {
   const indexHtml = await readFile(resolve(projectRoot, "index.html"), "utf8");
   const appJs = await readFile(resolve(projectRoot, "assets", "app.js"), "utf8");
+  const styleCss = await readFile(resolve(projectRoot, "assets", "style.css"), "utf8");
 
   assert.match(indexHtml, /id="wifi-access"/);
   assert.match(indexHtml, /id="wifi-qr-code"/);
   assert.match(appJs, /getPublicWifiQrConfig/);
   assert.match(appJs, /createQrSvgFromText/);
   assert.doesNotMatch(indexHtml + appJs, /api\.qrserver|chart\.googleapis|quickchart/);
+  assert.match(appJs, /scale: 4/);
+  assert.doesNotMatch(styleCss, /\.wifi-qr-code svg\s*{[^}]*width:\s*min/s);
 });
 
 test("host setup exposes optional Wi-Fi QR fields", async () => {
